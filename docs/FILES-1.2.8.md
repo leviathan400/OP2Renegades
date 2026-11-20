@@ -75,12 +75,14 @@ changing any file's line endings, so a copy from this repository hashes the same
 
 ## Checking a copy
 
-`SHA256SUMS-1.2.8.txt` lists the same hashes in the form `sha256sum` reads. From the Outpost 2 folder (or this
-repository's root, once it holds 1.2.8):
+[`SHA256SUMS-1.2.8.txt`](SHA256SUMS-1.2.8.txt) lists the same hashes in the form `sha256sum` reads, with paths from the
+Outpost 2 folder. From this repository's root, while it holds 1.2.8:
 
 ```
-sha256sum -c SHA256SUMS-1.2.8.txt
+sha256sum -c docs/SHA256SUMS-1.2.8.txt
 ```
+
+From an Outpost 2 folder, give the list's own path: `sha256sum -c path/to/SHA256SUMS-1.2.8.txt`.
 
 In PowerShell, one file at a time:
 

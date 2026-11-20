@@ -70,11 +70,11 @@ their line endings).
 
 ## Checking a copy
 
-`SHA256SUMS-1.2.0.txt` lists the same hashes in the form `sha256sum` reads. From the Outpost 2 folder (or this
-repository's root):
+[`SHA256SUMS-1.2.0.txt`](SHA256SUMS-1.2.0.txt) lists the same hashes in the form `sha256sum` reads, with paths from the
+Outpost 2 folder. From an Outpost 2 folder holding 1.2.0, give the list's own path:
 
 ```
-sha256sum -c SHA256SUMS-1.2.0.txt
+sha256sum -c path/to/SHA256SUMS-1.2.0.txt
 ```
 
 In PowerShell, one file at a time:

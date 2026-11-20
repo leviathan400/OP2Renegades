@@ -11,8 +11,8 @@ Outpost 2 with the Outpost Universe update (OPU 1.4.1).
 ## What's here
 
 Release 1.2.8, file for file as its zip installs it (the zip's SHA-256 and every file's are in
-[FILES-1.2.8.md](FILES-1.2.8.md); what changed since 1.2.0 is in [CHANGELOG.md](CHANGELOG.md), and 1.2.0's files and
-hashes in [FILES-1.2.0.md](FILES-1.2.0.md)):
+[docs/FILES-1.2.8.md](docs/FILES-1.2.8.md); what changed since 1.2.0 is in [CHANGELOG.md](CHANGELOG.md), and 1.2.0's files and
+hashes in [docs/FILES-1.2.0.md](docs/FILES-1.2.0.md)):
 
 | Files | What |
 |---|---|
@@ -75,3 +75,9 @@ Outpost Universe community.
 
 Questions, bug reports and play-test notes are welcome on the
 [Renegades forum board](https://forum.outpost2.net/index.php/board,33.0.html).
+
+## Helping
+
+Renegades is a community effort. [TODO.md](TODO.md) lists what's planned and where help is welcome: play testing,
+the open questions about the missions, new art, translations and the loader. Say what you think, or what you'd like to
+take on, on the forum board.
