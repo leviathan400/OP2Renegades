@@ -1,9 +1,12 @@
--- q01Lua.lua  -  Outpost : Renegades - Relocation (Lua) v1.2
+-- q01Lua.lua  -  Outpost : Renegades - Relocation (Lua) v1.2.8
 -- Converted from q01.dll. With q01Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, Eden's AI and the mission's events (below the converted part) are written by hand.
 -- Games run: Easy 151, Normal 151, Hard 151.
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
+
+-- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
+local VERSION = "1.2.8"
 
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.
@@ -117,6 +120,13 @@ function make_player(player, p)
   local function place(t) return start and { start[1] + t[1], start[2] + t[2] } or t end
   -- The original asks for every unit of a kit on one tile; the game finds each a place nearby.
   for _, u in ipairs(p.kit or {}) do make_unit(player, u, place(u.at), p.kits, false) end
+  -- The player's Structure Factory is the placement's; its bays are the difficulty's.
+  if p.kits then
+    local f = player:buildings("StructureFactory")[1]
+    if f then
+      for bay, kit in pairs(p.kits) do f:set_factory_cargo(bay, kit[1], kit[2]) end
+    end
+  end
   if p.view then player:center_view(place(p.view)) end
 end
 
@@ -508,6 +518,89 @@ local function make_eden_groups()                           -- 0x110029f1
   g.repair:set_rect(RECT(0x9B, 0x32, 0x9F, 0x35))
 end
 
+-- ---------------------------------------------------------------------------------------------------------------
+-- The carry-over writer, the same in q01-q03 (master copy: tools/carry/writer.lua; paste it in whole, OP2Lua has
+-- no require). The original DLL writes Q0N.mis as the game unloads it after a win (0x11005FA7 in q02;
+-- ../../findings/decompile/q02.md, "The carry-over q02 writes"); the remake keeps the same contents with OP2Lua's
+-- campaign store as q0N.carry beside this DLL. Status-bar tiles, Lua's 1-based players, the API's names:
+-- - cells: { x, y, cell type, tile }, for each cell whose type is above 0xF (the tile for dozed and rubble only);
+-- - colony: the human player's difficulty (0-2), food, kids, ore, rare ore, scientists and workers (no RLV count);
+-- - units: every player's, the highest first, structures then vehicles: type, player, x, y, weapon, a ConVec's kit,
+--   a truck's cargo and amount, and a Structure Factory's or Spaceport's six bays ({ kit, weapon or cargo }).
+-- A game started by op2launcher never tells the script it ended, so it's written once every victory condition
+-- still standing has fired (the game then ends as won), and again in on_end when the game reports a win.
+-- ---------------------------------------------------------------------------------------------------------------
+
+local carry_wins = {}
+do
+  local victory = mission.victory
+  mission.victory = function(...)
+    local t = victory(...)
+    carry_wins[#carry_wins + 1] = t
+    return t
+  end
+end
+
+-- Every victory condition still standing has fired for the human player (players[1] in q01-q04).
+local function carry_won()
+  local any = false
+  for _, t in ipairs(carry_wins) do
+    if t.valid then
+      if not t:has_fired(players[1]) then return false end
+      any = true
+    end
+  end
+  return any
+end
+
+local function carry_over(mission_name, difficulty)
+  local size = game.map_size()
+  local cells = {}
+  for y = 1, size.h do
+    for x = 1, size.w do
+      local t = game.cell(x, y).type
+      if t > 0xF then
+        cells[#cells + 1] = (t == 0x15 or t == 0x16) and { x, y, t, game.tile({ x, y }) } or { x, y, t }
+      end
+    end
+  end
+  local p = players[1]
+  local colony = { difficulty = difficulty, food = p.food, kids = p.kids, ore = p.ore, rare_ore = p.rare_ore,
+                   scientists = p.scientists, workers = p.workers }
+  local function named(v) return v and v ~= "None" and v ~= "" and v ~= "Empty" and v or nil end
+  local units = {}
+  local function add(id, u)
+    local r = { type = u.type, player = id, x = u.x, y = u.y, vehicle = u.is_vehicle or nil,
+                weapon = named(u.weapon), kit = u.type == "ConVec" and named(u.kit) or nil }
+    if named(u.cargo) then r.cargo, r.amount = u.cargo, u.cargo_amount end
+    if u.type == "StructureFactory" or u.type == "Spaceport" then
+      r.bays = {}
+      for bay = 1, 6 do
+        local kit, extra = u:factory_cargo(bay)
+        r.bays[bay] = { kit or "None", extra }
+      end
+    end
+    units[#units + 1] = r
+  end
+  for id = game.num_players(), 1, -1 do
+    for _, u in ipairs(players[id]:units()) do if u.is_building then add(id, u) end end
+    for _, u in ipairs(players[id]:units()) do if u.is_vehicle then add(id, u) end end
+  end
+  return { mission = mission_name, tick = game.tick(), colony = colony, cells = cells, units = units }
+end
+
+local function save_carry_over(mission_name, difficulty, why)
+  if not campaign then print("This OP2LuaCore has no campaign store: no carry-over written") return end
+  local data = carry_over(mission_name, difficulty)
+  local ok, err = campaign.save(mission_name, data)
+  print(("Carry-over %s.carry (%s): %s, %d cells, %d units%s"):format(mission_name, why,
+        ok and "saved" or "not saved", #data.cells, #data.units, err and (": " .. err) or ""))
+end
+
+function on_end(result)
+  if result and result.result == "won" then save_carry_over("q01", state.difficulty, "the game reports the win") end
+end
+
 -- One of the player's units in the rectangle (an area event, 0x110044d0).
 local function player_in(r)
   return function()
@@ -517,6 +610,7 @@ local function player_in(r)
 end
 
 function on_init()
+  game.message("Renegades v" .. VERSION, false)
   local difficulty = DIFFICULTIES[players[1].difficulty] and players[1].difficulty or "Normal"
   local d = DIFFICULTIES[difficulty]
   local goals = GOALS[difficulty]
@@ -569,6 +663,8 @@ function on_init()
                   "Have at least " .. goals.colonists .. " total colonists surviving")
   mission.victory(trigger.resource{resource = "Scientists", compare = ">=", amount = goals.scientists, player = HUMAN},
                   "Have at least " .. goals.scientists .. " scientists surviving")
+  -- The carry-over for q02, once every victory condition has been met.
+  when(carry_won, function() save_carry_over("q01", state.difficulty, "all the victory conditions met") end)
 
   -- Coming near Eden's base brings its forces out early.
   when(player_in(RECT(0x87, 1, 0x87 + 0x18, 1 + 0x20)), first_wave)

@@ -1,4 +1,4 @@
--- q03Lua.placement.lua  -  Outpost : Renegades - Consequences (Lua)
+-- q03Lua.placement.lua  -  Outpost : Renegades - Consequences (Lua) v1.2.8
 -- Converted from q03.dll: what its setup makes at every difficulty. What changes with the
 -- difficulty (more units on Easy, colonists, stores, research) and the beacons it rolls are in q03Lua.lua.
 -- Coordinates are the in-game status-bar ones (map file tile + 1).

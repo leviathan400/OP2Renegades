@@ -1,9 +1,12 @@
--- q03Lua.lua  -  Outpost : Renegades - Consequences (Lua) v1.2
+-- q03Lua.lua  -  Outpost : Renegades - Consequences (Lua) v1.2.8
 -- Converted from q03.dll. With q03Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, the computer players' AI and the mission's events (below the converted part) are written by hand.
 -- Games run: Easy 151, Normal 151, Hard 151.
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
+
+-- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
+local VERSION = "1.2.8"
 
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.
@@ -458,6 +461,8 @@ local function make_unit(player, u, at, kits, exact)
   if u.cargo and made[1] then made[1]:set_cargo(u.cargo, u.amount) end
   -- A ConVec's kit with its weapon (a Guard Post kit's).
   if u.topping and made[1] then made[1]:set_kit(u.weapon, u.topping) end
+  -- A carried-over ConVec's kit (and its topping, if any).
+  if u.kit and made[1] then made[1]:set_kit(u.kit, u.topping) end
   -- A vehicle the setup parks in a Garage: its bay, by the Garage's dock.
   if u.garage and made[1] then made[1]:put_in_garage(u.garage.bay, u.garage.at) end
   if u.type == "StructureFactory" and kits and made[1] then
@@ -608,12 +613,149 @@ local state = {
   defected = false,            -- 0x1101C0EC
   lava = {},                   -- 0x1101C0F0: the tiles the eruption makes lava-possible later
   salvage_at = { 0, 0 },       -- 0x11020148: where the salvage truck was at the last check
+  ply_builders_records = 0,    -- how many times player 3's Factory has the Builders recorded (not in the DLL)
 }
 local g = {}                   -- the DLL's groups
 local keep = {}                -- the units it keeps
 local ev = {}                  -- the events it keeps, to remove later
 local vc = {}                  -- the victory conditions and triggers it changes later
 local repairers = {}           -- 0x110160CC: a structure's repairer, by the structure's id and player
+
+-- ---------------------------------------------------------------------------------------------------------------
+-- The carry-over from q02 (InitMap, 0x1100487D; ../../findings/decompile/q03.md). q02's remake keeps it as q02.carry
+-- in OP2Lua's campaign store (the format is in tools/carry/writer.lua). Without one (a mission picked on its own, a
+-- core without the store) the start is the stand-in's, as before.
+-- ---------------------------------------------------------------------------------------------------------------
+
+local function load_carry_over(name)
+  if not campaign then print("This OP2LuaCore has no campaign store: the stand-in start") return nil end
+  local data, err = campaign.load(name)
+  if not data then print("No " .. name .. ".carry (" .. tostring(err) .. "): the stand-in start") end
+  return data
+end
+
+-- What carries over (0x1100472D): player 1's vehicles in file order, each kind up to its limit at the difficulty
+-- (0 Easy, 1 Normal, 2 Hard); a food truck's load is set to 200. The n-th kept goes at (126 - n/2, 125 + n%2),
+-- facing East, lights on (0x11004971).
+local CARRY_LIMITS = {
+  food_truck = { 2, 2, 1 }, metal_truck = { 4, 3, 2 }, Lynx = { 4, 2, 0 }, RoboMiner = { 2, 2, 1 },
+  RoboSurveyor = { 1, 1, 1 }, RoboDozer = { 1, 1, 1 }, Earthworker = { 1, 1, 1 },
+  CommandCenter = { 1, 1, 1 }, StructureFactory = { 1, 1, 1 }, CommonOreSmelter = { 1, 1, 1 }, Tokamak = { 1, 1, 1 },
+}
+local function carried_vehicles(c, d)
+  local taken, list = {}, {}
+  for _, r in ipairs(c.units or {}) do
+    if r.player == HUMAN and r.vehicle then
+      local kind = r.type
+      if r.type == "CargoTruck" then
+        kind = r.cargo == "Food" and "food_truck" or r.cargo == "CommonMetal" and "metal_truck" or "none"
+      elseif r.type == "ConVec" then
+        kind = r.kit or "none"
+        if not CARRY_LIMITS[kind] then kind = "none" end
+      end
+      local limit = kind == "none" and 0 or CARRY_LIMITS[kind] and CARRY_LIMITS[kind][d + 1]
+      if not limit or (taken[kind] or 0) < limit then
+        taken[kind] = (taken[kind] or 0) + 1
+        local n = #list
+        local u = { type = r.type, direction = "East", lights = true, at = { 126 - n // 2, 125 + n % 2 } }
+        if r.type == "CargoTruck" then
+          u.cargo, u.amount = r.cargo, r.cargo == "Food" and 200 or r.amount
+        elseif r.type == "ConVec" then
+          u.kit, u.topping = r.kit, r.weapon
+        else
+          u.weapon = r.weapon
+        end
+        list[#list + 1] = u
+      end
+    end
+  end
+  return list
+end
+
+-- ---------------------------------------------------------------------------------------------------------------
+-- The carry-over writer, the same in q01-q03 (master copy: tools/carry/writer.lua; paste it in whole, OP2Lua has
+-- no require). The original DLL writes Q0N.mis as the game unloads it after a win (0x11005FA7 in q02;
+-- ../../findings/decompile/q02.md, "The carry-over q02 writes"); the remake keeps the same contents with OP2Lua's
+-- campaign store as q0N.carry beside this DLL. Status-bar tiles, Lua's 1-based players, the API's names:
+-- - cells: { x, y, cell type, tile }, for each cell whose type is above 0xF (the tile for dozed and rubble only);
+-- - colony: the human player's difficulty (0-2), food, kids, ore, rare ore, scientists and workers (no RLV count);
+-- - units: every player's, the highest first, structures then vehicles: type, player, x, y, weapon, a ConVec's kit,
+--   a truck's cargo and amount, and a Structure Factory's or Spaceport's six bays ({ kit, weapon or cargo }).
+-- A game started by op2launcher never tells the script it ended, so it's written once every victory condition
+-- still standing has fired (the game then ends as won), and again in on_end when the game reports a win.
+-- ---------------------------------------------------------------------------------------------------------------
+
+local carry_wins = {}
+do
+  local victory = mission.victory
+  mission.victory = function(...)
+    local t = victory(...)
+    carry_wins[#carry_wins + 1] = t
+    return t
+  end
+end
+
+-- Every victory condition still standing has fired for the human player (players[1] in q01-q04).
+local function carry_won()
+  local any = false
+  for _, t in ipairs(carry_wins) do
+    if t.valid then
+      if not t:has_fired(players[1]) then return false end
+      any = true
+    end
+  end
+  return any
+end
+
+local function carry_over(mission_name, difficulty)
+  local size = game.map_size()
+  local cells = {}
+  for y = 1, size.h do
+    for x = 1, size.w do
+      local t = game.cell(x, y).type
+      if t > 0xF then
+        cells[#cells + 1] = (t == 0x15 or t == 0x16) and { x, y, t, game.tile({ x, y }) } or { x, y, t }
+      end
+    end
+  end
+  local p = players[1]
+  local colony = { difficulty = difficulty, food = p.food, kids = p.kids, ore = p.ore, rare_ore = p.rare_ore,
+                   scientists = p.scientists, workers = p.workers }
+  local function named(v) return v and v ~= "None" and v ~= "" and v ~= "Empty" and v or nil end
+  local units = {}
+  local function add(id, u)
+    local r = { type = u.type, player = id, x = u.x, y = u.y, vehicle = u.is_vehicle or nil,
+                weapon = named(u.weapon), kit = u.type == "ConVec" and named(u.kit) or nil }
+    if named(u.cargo) then r.cargo, r.amount = u.cargo, u.cargo_amount end
+    if u.type == "StructureFactory" or u.type == "Spaceport" then
+      r.bays = {}
+      for bay = 1, 6 do
+        local kit, extra = u:factory_cargo(bay)
+        r.bays[bay] = { kit or "None", extra }
+      end
+    end
+    units[#units + 1] = r
+  end
+  for id = game.num_players(), 1, -1 do
+    for _, u in ipairs(players[id]:units()) do if u.is_building then add(id, u) end end
+    for _, u in ipairs(players[id]:units()) do if u.is_vehicle then add(id, u) end end
+  end
+  return { mission = mission_name, tick = game.tick(), colony = colony, cells = cells, units = units }
+end
+
+local function save_carry_over(mission_name, difficulty, why)
+  if not campaign then print("This OP2LuaCore has no campaign store: no carry-over written") return end
+  local data = carry_over(mission_name, difficulty)
+  local ok, err = campaign.save(mission_name, data)
+  print(("Carry-over %s.carry (%s): %s, %d cells, %d units%s"):format(mission_name, why,
+        ok and "saved" or "not saved", #data.cells, #data.units, err and (": " .. err) or ""))
+end
+
+-- The DLL writes q03.mis only when the game did NOT end as won (0x11005FD4, findings/CRASH-LEADS.md 7), so a won
+-- q03 leaves q04 unable to start. The remake writes it on the win, as q01 and q02 do (../../TODO.md).
+function on_end(result)
+  if result and result.result == "won" then save_carry_over("q03", state.d, "the game reports the win") end
+end
 
 local function make(type, player, at, direction, weapon)
   return game.create_unit{ type = type, player = player, at = at, direction = DIRS[direction or 0],
@@ -1068,6 +1210,14 @@ end
 local ply_part_1, ply_settles
 
 -- Part 5 (0x11003CD5, 4200 ticks after part 4).
+
+-- Player 3's Factory reinforces the Builders at 200 (parts 3 and 5 both record it), counted so Plymouth settling
+-- can take every record off before the group is destroyed.
+local function record_ply_builders()
+  g.ply_factory:record_veh_reinforce_group(g.ply_builders, 200)
+  state.ply_builders_records = state.ply_builders_records + 1
+end
+
 local function ply_part_5()
   players[PLY]:mark_research(5602)
   local function wants(grp, mw, rpg)
@@ -1083,7 +1233,7 @@ local function ply_part_5()
   g.defence_d:add_guarded_rect(RECT(0x23, 0x4A, 0x38, 0x57))
   g.defence_d:set_targ_count("Lynx", "Microwave", 2)
   g.defence_d:set_targ_count("Lynx", "RPG", 1)
-  g.ply_factory:record_veh_reinforce_group(g.ply_builders, 200)
+  record_ply_builders()
   record_list(g.ply_builders, PLY_LIST_2)
 end
 
@@ -1108,7 +1258,7 @@ local function ply_part_3()
   ev.part3 = nil
   local vf = players[PLY]:buildings("VehicleFactory")[1]
   if vf then take(g.ply_factory, vf) end
-  g.ply_factory:record_veh_reinforce_group(g.ply_builders, 200)
+  record_ply_builders()
   g.ply_factory:record_veh_reinforce_group(g.defence_a, 500)
   g.ply_factory:record_veh_reinforce_group(g.defence_b, 1200)
   g.ply_factory:record_veh_reinforce_group(g.defence_c, 800)
@@ -1247,7 +1397,10 @@ ply_settles = function()
   g.defence_a:set_rect(RECT(0x30, 0x51, 0x33, 0x58))
   g.defence_a:add_guarded_rect(RECT(0x33, 0x4B, 0x38, 0x57))
   g.defence_a:add_guarded_rect(RECT(0x1F, 0x43, 0x33, 0x53))
-  g.ply_factory:unrecord_veh_group(g.ply_builders)
+  -- Every record of the old group goes, not one: part 3 and part 5 both record it, and the DLL's one UnRecordVehGroup
+  -- left the other pointing at the destroyed group, which faults the game (findings/CRASH-LEADS.md 13).
+  for _ = 1, math.max(state.ply_builders_records, 1) do g.ply_factory:unrecord_veh_group(g.ply_builders) end
+  state.ply_builders_records = 0
   local nb = ai.building_group(PLY)
   nb:set_targ_count("ConVec", nil, 1)
   nb:set_targ_count("Earthworker", nil, 1)
@@ -1790,11 +1943,14 @@ function setup_mission(difficulty)
   once(v, v, volcano)
   once(12000, 12000, arrive)
   once(80000, 80000, defectors_start)
+  -- The carry-over for q04, once every victory condition still standing has been met.
+  when(carry_won, function() save_carry_over("q03", state.d, "all the victory conditions met") end)
 end
 
 function on_tick() run_events() end
 
 function on_init()
+  game.message("Renegades v" .. VERSION, false)
   local difficulty = DIFFICULTIES[players[1].difficulty] and players[1].difficulty or "Normal"
   local d = DIFFICULTIES[difficulty]
   print("Difficulty: " .. difficulty)
@@ -1807,6 +1963,19 @@ function on_init()
     else
       make_unit(players[u.player], u, u.at, nil, true)
     end
+  end
+  -- InitMap (0x1100487D): the difficulty check, then player 1's vehicles from q02.carry in place of the stand-in's.
+  -- The rest of the start (colonists, stores, Eden's Easy-only posts) follows the checked difficulty.
+  local carried = load_carry_over("q02")
+  if carried then
+    local NAMES = { [0] = "Easy", "Normal", "Hard" }
+    local cd = carried.colony and carried.colony.difficulty
+    if cd and NAMES[cd] and NAMES[cd] ~= difficulty then
+      game.message("You're cheating ! Difficulty reset to " .. ({ [0] = "easy", "medium", "hard" })[cd] .. " :-)")
+      difficulty = NAMES[cd]
+      d = DIFFICULTIES[difficulty]
+    end
+    d.players[1].units = carried_vehicles(carried, ({ Easy = 0, Normal = 1, Hard = 2 })[difficulty])
   end
   for id, p in pairs(d.players) do make_player(players[id], p) end
   -- The setup's own map edits, after its units (and the draws it makes for them).
@@ -1965,8 +2134,10 @@ end
 -- - A unit is taken out of the group that last took it before another takes it, and only removed from that group:
 --   the game's TakeUnit leaves it in the old group's list too, and removing it from that list later crashes the game
 --   (findings/CRASH-LEADS.md 11). The DLL's own takes can leave a unit in two lists.
--- - The start is the stand-in carry-over (q02 won at tick 2900 in the harness), baked in by op2dll; the DLL reads
---   Q02.mis. So there is no "You're cheating!" check.
+-- - Player 1's vehicles come from q02.carry, which q02's remake writes when it's won, in place of Q02.mis; without
+--   one, from the stand-in carry-over (q02 won at tick 2900 in the harness), baked in by op2dll. The "You're
+--   cheating!" check is a message, not a message box.
+-- - q03.carry is written when q03 is won; the DLL writes q03.mis only when it isn't, so q04 can't follow a win.
 -- - Needs OP2Lua 0.7.10 or later for unit:set_offensive (op2extra's SetOffensive), which holds the escorts' fire.
 -- - The scout patrol's ClearPatrolMode (after the third raid) is a DoGuardRect: OP2Lua has no ClearPatrolMode.
 -- - Messages go to the message list; the DLL points some at a unit or the first Standard Lab.
@@ -1975,5 +2146,9 @@ end
 -- - The defectors' Evac carries a "Panther" as its cargo (map id 6, as the DLL's SetCargo(6)), the DLL's mark for
 --   colonists aboard.
 -- - A rectangle starting one column off the map (x 0x1F) starts at the map's first column here.
--- - Kept as in the DLL though probably slips: the repeating tile event on (0x65, 6) reruns Mining 3's setup every
---   cycle once something stands there; Eden's waves add their one-shot events again on every wave.
+-- - Plymouth settling takes every Factory record of its Builders off before destroying the group: the DLL records it
+--   in parts 3 and 5 and takes off one, so settling again after part 5 crashes the game (findings/CRASH-LEADS.md 13).
+-- - Kept as in the DLL: the repeating tile event on (0x65, 6) reruns Mining 3's setup every cycle once something
+--   stands there. Each run records Mining 3 with Eden's Factory again, and the duplicate records weight the Factory's
+--   choice of what to build, so running it once changes how Eden plays (measured 2026-11-19, ../../TODO.md).
+-- - Kept as in the DLL though probably a slip: Eden's waves add their one-shot events again on every wave.

@@ -26,16 +26,20 @@ Before each mission the loader also sets three of the game's own options in OPU\
 video (IntroAVI=0), no "check for updates?" question (CheckForUpdates=0) and no unit health bars (ShowUnitHPBars=0).
 They stay set for every game; change them back in the game's options if you want them.
 
-Updating: the zip holds a fresh OPU\renegades\Renegades.ini (the campaign at mission 1). To keep your place in
-the campaign, don't let the unzip replace your Renegades.ini.
+Updating: unzip the new release over the old one. The zip has no Renegades.ini (the loader writes it on its first
+start), so your place in the campaign, its difficulty and your folders are kept.
 
 What goes where:
   OPU\Renegades.exe           the loader, beside OPULauncher.exe
   OPU\renegades\              Renegades' menu art and texts (renshres.dll, ren.vol), the R (renegmbl.raw), and the
-                              loader's settings and history
+                              loader's settings and history, and its texts in English, German, Spanish and
+                              Portuguese (lang.en.ini, lang.de.ini, lang.es.ini, lang.pt.ini): the first start
+                              picks Windows' language if there's a file for it; change it in Preferences, or
+                              Lang=en / de / es / pt in Renegades.ini. To translate the loader, copy lang.en.ini
+                              to lang.<code>.ini.
   OPU\Renegades.dll           the in-game look: the "OP: RENEGADES" title, the R in the command pane
   OPU\ren2res.dll             Renegades' in-game art, used by Renegades.dll
-  OPU\OP2LuaCore.dll          OP2Lua 0.8.2 (the missions need it; it replaces an older one)
+  OPU\OP2LuaCore.dll          OP2Lua 0.8.3 (the missions need it; it replaces an older one)
   OPU\op2launcher.exe, Launcher.dll   start a mission straight from the loader
   OPU\maps\Renegades\         the four missions, their maps and Renegades' voice lines
   OPU\logs\                   where OP2Lua writes the missions' logs
@@ -50,5 +54,6 @@ PLAYING
 The loader follows the game: when a mission ends it records the result (renegades\Renegades-history.csv), closes
 Outpost 2 once it's back at its menu, and moves the campaign on after a win.
 
-Not yet: the game plays at its own difficulty setting (the loader shows the objectives for the one you pick); a
-mission's start is a set base rather than your own previous mission.
+The game plays at the difficulty you pick, and each mission after the first starts from what you left in the one
+before (as the original campaign did). During the play tests every game starts from the same random seed (1),
+so a problem you report can be played again from the same start; the seed is in renegades\Renegades-history.csv.

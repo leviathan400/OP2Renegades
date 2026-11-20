@@ -1,4 +1,4 @@
--- q01Lua.placement.lua  -  Outpost : Renegades - Relocation (Lua)
+-- q01Lua.placement.lua  -  Outpost : Renegades - Relocation (Lua) v1.2.8
 -- Converted from q01.dll: what its setup makes at every difficulty. What changes with the
 -- difficulty (more units on Easy, colonists, stores, research) and the beacons it rolls are in q01Lua.lua.
 -- Coordinates are the in-game status-bar ones (map file tile + 1).

@@ -10,22 +10,24 @@ Outpost 2 with the Outpost Universe update (OPU 1.4.1).
 
 ## What's here
 
-Release 1.2.0, file for file as its zip installs it (the zip's SHA-256 and every file's are in
-[FILES-1.2.0.md](FILES-1.2.0.md)):
+Release 1.2.8, file for file as its zip installs it (the zip's SHA-256 and every file's are in
+[FILES-1.2.8.md](FILES-1.2.8.md); what changed since 1.2.0 is in [CHANGELOG.md](CHANGELOG.md), and 1.2.0's files and
+hashes in [FILES-1.2.0.md](FILES-1.2.0.md)):
 
 | Files | What |
 |---|---|
 | `OPU/Renegades.exe` | The Renegades loader: the campaign's menus in Renegades' own look. It starts each mission and follows the game. |
 | `OPU/Renegades.dll`, `OPU/ren2res.dll` | The module that gives a Renegades game its own look (the "OP: RENEGADES" title, the R in the command pane), and Renegades' in-game art it uses. |
-| `OPU/OP2LuaCore.dll` | The [OP2Lua](https://github.com/leviathan400/OP2Lua) runtime (0.8.2) the missions need. |
+| `OPU/OP2LuaCore.dll` | The [OP2Lua](https://github.com/leviathan400/OP2Lua) runtime (0.8.3) the missions need. |
 | `OPU/op2launcher.exe`, `OPU/Launcher.dll` | Start a mission straight from the loader. |
-| `OPU/renegades/` | Renegades' menu art and texts (`renshres.dll`, `ren.vol`), the R (`renegmbl.raw`), the loader's default settings (`Renegades.ini`) and the install notes with the credits (`README.txt`). |
+| `OPU/renegades/` | Renegades' menu art and texts (`renshres.dll`, `ren.vol`), the R (`renegmbl.raw`), the loader's texts in English, German, Spanish and Portuguese (`lang.en.ini`, `lang.de.ini`, `lang.es.ini`, `lang.pt.ini`) and the install notes with the credits (`README.txt`). |
 | `OPU/maps/Renegades/q01Lua` ... `q04Lua` (`.dll`, `.lua`, `.placement.lua`) | The four missions: Relocation, Onslaught, Consequences and Raid. Each `.dll` is OP2Lua's mission DLL, the `.lua` its script (objectives, events, the computer player's AI) and the `.placement.lua` the units and structures it places at the start. |
 | `OPU/maps/Renegades/Q01.MAP` ... `Q04.MAP`, `Q01.TEK` ... `Q03.TEK` | Renegades' own maps and tech trees, from the original campaign. |
 | `OPU/maps/Renegades/ren228.wav` ... `ren234.wav` | Renegades' voice lines, played by the missions. |
 
-The release has no `outpost2.ini`: the game's own settings stay as they are. The mission scripts are plain Lua: open
-a `.lua` file to see how a mission is set up and what it does.
+The release has no `outpost2.ini`, so the game's own settings stay as they are, and no `Renegades.ini`: the loader
+writes its settings on its first start, so unzipping a newer release over an older one keeps your campaign. The
+mission scripts are plain Lua: open a `.lua` file to see how a mission is set up and what it does.
 
 ## Playing
 
@@ -37,9 +39,15 @@ a `.lua` file to see how a mission is set up and what it does.
 3. Start `OPU\Renegades.exe`.
 
 The first start registers the module with OPU (two lines in `OPU\outpost2.ini`); it only acts on a game the loader
-starts. The loader shows Renegades' own menus, prologue, briefings, objectives and story. It starts each mission,
-follows the game, records the result and moves the campaign on after a win. `Renegades.exe /select` picks any one
-mission.
+starts. The loader shows Renegades' own menus, prologue, briefings, objectives and story. It starts each mission at
+the difficulty you picked, follows the game, records the result and moves the campaign on after a win; each mission
+after the first starts from what you won the one before with. `Renegades.exe /select` picks any one mission.
+
+The loader speaks English, German, Spanish and Portuguese: your Windows language on the first start if it has it,
+else English; change it in its Preferences. To translate it, copy `OPU\renegades\lang.en.ini` to
+`lang.<code>.ini` and translate the quoted texts.
+
+To update, unzip the new release over the old one.
 
 ## The remakes
 
@@ -62,7 +70,7 @@ Outpost 2: Renegades was made by **Eddy-B** (copyright 2004-2006), with, from it
 - novella: Gwyned;
 - beta-testing: Mez, Leviathan, TH300, Baikon, PlayingOP, Invictus, op2Hacker, ZigZagJoe, Gwyned and wizisi.
 
-The Lua remakes are by Leviathan. Outpost 2 is by Dynamix and Sierra; the Outpost Universe update (OPU) is by the
+The Lua remakes are by Leviathan. Outpost 2: Divided Destiny is by Dynamix and Sierra; the Outpost Universe update (OPU) is by the
 Outpost Universe community.
 
 Questions, bug reports and play-test notes are welcome on the

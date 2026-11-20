@@ -1,9 +1,12 @@
--- q04Lua.lua  -  Outpost : Renegades - Raid (Lua) v1.2
+-- q04Lua.lua  -  Outpost : Renegades - Raid (Lua) v1.2.8
 -- Converted from q04.dll. With q04Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, the computer players' AI and the mission's events (below the converted part) are written by hand.
 -- Games run: Easy 151, Normal 151, Hard 151.
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
+
+-- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
+local VERSION = "1.2.8"
 
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.
@@ -1159,10 +1162,91 @@ end
 
 function on_tick() run_events() end
 
+-- ---------------------------------------------------------------------------------------------------------------
+-- The carry-over from q03 (0x11004267; ../../findings/decompile/q04.md). q03's remake keeps it as q03.carry in
+-- OP2Lua's campaign store (the format is in tools/carry/writer.lua). Only player 1's Lynx carry over. Without a
+-- file (a mission picked on its own, a core without the store) the start is the stand-in's, as before.
+-- ---------------------------------------------------------------------------------------------------------------
+
+local function load_carry_over(name)
+  if not campaign then print("This OP2LuaCore has no campaign store: the stand-in start") return nil end
+  local data, err = campaign.load(name)
+  if not data then print("No " .. name .. ".carry (" .. tostring(err) .. "): the stand-in start") end
+  return data
+end
+
+-- The Lynx slots (0x11011800), and past them the tables the overflow runs on into: the entry point, Eden's scout
+-- waypoints and the patrol route (whose last entry, (-1, -1), is off the map: no Lynx is made there).
+local LYNX_SLOTS = { { 0x3F, 0x7B }, { 0x4D, 0x7B }, { 0x41, 0x7B }, { 0x4B, 0x7B }, { 0x3F, 0x7D }, { 0x4D, 0x7D },
+                     { 0x41, 0x7D }, { 0x4B, 0x7D }, ENTRY }
+for i = 0, 9 do LYNX_SLOTS[#LYNX_SLOTS + 1] = WAYPOINTS[i] end
+for _, w in ipairs({ { 0x4C, 0x1A }, { 0x36, 0x0E }, { 0x2F, 0x45 }, { 0x48, 0x67 }, { 0x5A, 0x4B }, { 0x4C, 0x25 } }) do
+  LYNX_SLOTS[#LYNX_SLOTS + 1] = w
+end
+
+-- The count and the split into eight (0x11004fbb, 0x11004348-0x110043e7), faults included: the first vehicle record
+-- isn't counted, and with few Lynx the split runs past the eight slots. Microwave Lynx, then Stickyfoam, facing
+-- North, lights off. No Lynx at all fails the original's setup; the remake then makes eight Microwave Lynx, as on
+-- Hard from the stand-in.
+local function carried_lynx(c)
+  local m, s, first = 0, 0, true
+  for _, r in ipairs(c.units or {}) do
+    if r.vehicle then
+      if first then
+        first = false
+      elseif r.player == HUMAN and r.type == "Lynx" then
+        if r.weapon == "Microwave" then m = m + 1 elseif r.weapon == "Stickyfoam" then s = s + 1 end
+      end
+    end
+  end
+  local a, b
+  local t = (m + s) * 5 // 4
+  if t == 0 then
+    print("No Lynx in q03.carry: the original can't start; eight Microwave Lynx instead")
+    a, b = 8, 0
+  else
+    a, b = (10 * m + 10) // t, (10 * s + 10) // t
+    local spare = m - a
+    while b > 4 and spare ~= 0 do a, b, spare = a + 1, b - 1, spare - 1 end
+    while a + b < 8 do
+      if spare > 0 then a, spare = a + 1, spare - 1 else b = b + 1 end
+    end
+    while a + b > 8 do
+      if spare > 0 then a, spare = a - 1, spare + 1 else b = b - 1 end
+    end
+  end
+  print(("q03.carry: %d Microwave and %d Stickyfoam Lynx; %d Microwave, %d Stickyfoam made"):format(m, s, a,
+        math.max(b, 0)))
+  local list = {}
+  local function add(weapon)
+    local slot = LYNX_SLOTS[#list + 1]
+    if slot and slot[1] >= 0 then
+      list[#list + 1] = { type = "Lynx", weapon = weapon, direction = "North", lights = false,
+                          at = { slot[1] - 31, slot[2] + 1 } }
+    else
+      list[#list + 1] = false
+    end
+  end
+  for _ = 1, a do add("Microwave") end
+  for _ = 1, b do add("Stickyfoam") end
+  local made = {}
+  for _, u in ipairs(list) do if u then made[#made + 1] = u end end
+  return made
+end
+
 function on_init()
+  game.message("Renegades v" .. VERSION, false)
   local difficulty = DIFFICULTIES[players[1].difficulty] and players[1].difficulty or "Normal"
   local d = DIFFICULTIES[difficulty]
   print("Difficulty: " .. difficulty)
+  -- Player 1's start: the layout's units, then the Lynx (from q03.carry, else the stand-in's).
+  local carried = load_carry_over("q03")
+  local lynx = d.players[1].units
+  if carried then
+    lynx = {}
+    for _, u in ipairs(d.players[1].units) do if u.type ~= "Lynx" then lynx[#lynx + 1] = u end end
+    for _, u in ipairs(carried_lynx(carried)) do lynx[#lynx + 1] = u end
+  end
   -- The players first (0x11004475), then the beacons, Player 2's base, Player 1's start and the Lynx from q03.
   for id, p in pairs(d.players) do
     local stats = {}
@@ -1173,10 +1257,17 @@ function on_init()
   players[1]:ally_with(4)
   for _, b in ipairs(START_BEACONS) do game.create_beacon(b) end
   for _, u in ipairs(PLY_START) do make_unit(players[u.player], u, u.at, nil, true) end
-  for _, u in ipairs(d.players[1].units) do make_unit(players[1], u, u.at, nil, true) end
+  for _, u in ipairs(lynx) do make_unit(players[1], u, u.at, nil, true) end
   players[1]:center_view({ 39, 121 })
   game.set_daylight_moves(false)
   game.set_daylight_everywhere(false)
+  -- The difficulty check (0x110042e0): q03 played at another difficulty sets the mission's own (not the player's).
+  local NAMES = { [0] = "Easy", "Normal", "Hard" }
+  local cd = carried and carried.colony and carried.colony.difficulty
+  if cd and NAMES[cd] and NAMES[cd] ~= difficulty then
+    game.message("You're cheating ! Difficulty reset to " .. ({ [0] = "easy", "medium", "hard" })[cd] .. " :-)")
+    difficulty = NAMES[cd]
+  end
   setup_mission(difficulty)
 end
 
@@ -1184,8 +1275,11 @@ end
 -- - Renegades' voice lines (its extra.vol's savnt228-234, sounds 178-184) play from ren228.wav-ren234.wav beside
 --   the mission through OP2Lua's game.play_wav, not through the game's sound table: OPU 1.4.1 can't load the
 --   mod's extra.vol. On a core without game.play_wav the stock sounds play.
--- - The start is the stand-in carry-over (q03 at tick 5000 in the harness), baked in by op2dll: the Lynx q03 left,
---   on the original's slots, its overflow included (Easy 10, Normal 16). The DLL reads Q03.mis.
+-- - The Lynx come from q03.carry, which q03's remake writes when it's won, in place of Q03.mis, split as the DLL
+--   does, its overflow included. Without one, from the stand-in carry-over (q03 at tick 5000 in the harness), baked
+--   in by op2dll (Easy 10, Normal 16). The "You're cheating!" check is a message; the difficulty flags it sets
+--   gate the hard-only parts the remake leaves out (below). An overflow onto the patrol route's end mark (-1, -1)
+--   makes no Lynx there.
 -- - Hard starts with eight Microwave Lynx on the eight slots: from that carry-over the original can't start at all
 --   (no Lynx, findings/CRASH-LEADS.md 10).
 -- - The three difficulty flags are clear, as in a fresh game of the original (they're only set by its "You're

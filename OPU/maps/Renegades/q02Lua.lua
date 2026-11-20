@@ -1,15 +1,32 @@
--- q02Lua.lua  -  Outpost : Renegades - Onslaught (Lua) v1.2
+-- q02Lua.lua  -  Outpost : Renegades - Onslaught (Lua) v1.2.8
 -- Converted from q02.dll. With q02Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, the computer players' AI and the mission's events (below the converted part) are written by hand.
 -- Games run: Easy 151, Normal 151, Hard 151.
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
 
+-- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
+local VERSION = "1.2.8"
+
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.
 local BEACONS = {
   rolled = {
   },
+}
+
+-- The stand-in carry-over's tubes (Q01.mis from the harness: q01 ended as won at tick 2900, alike at every
+-- difficulty), made only when there's no q01.carry.
+local STANDIN_TUBES = {
+  { 11, 45 }, { 11, 46 }, { 12, 45 }, { 12, 46 }, { 15, 23 }, { 15, 24 }, { 15, 25 }, { 16, 23 }, { 16, 24 }, { 16, 25 },
+  { 16, 27 }, { 16, 28 }, { 17, 23 }, { 17, 24 }, { 17, 25 }, { 17, 26 }, { 17, 27 }, { 17, 28 }, { 17, 29 }, { 18, 23 },
+  { 18, 24 }, { 18, 25 }, { 18, 27 }, { 18, 28 }, { 19, 24 }, { 19, 28 }, { 20, 23 }, { 20, 24 }, { 20, 25 }, { 21, 23 },
+  { 21, 24 }, { 21, 25 }, { 22, 23 }, { 22, 24 }, { 22, 25 }, { 22, 26 }, { 23, 23 }, { 23, 24 }, { 23, 25 }, { 24, 24 },
+  { 110, 4 }, { 110, 5 }, { 110, 6 }, { 111, 4 }, { 111, 5 }, { 111, 6 }, { 112, 4 }, { 112, 5 }, { 112, 6 }, { 112, 7 },
+  { 113, 4 }, { 113, 5 }, { 113, 6 }, { 113, 30 }, { 114, 5 }, { 114, 30 }, { 115, 4 }, { 115, 5 }, { 116, 4 }, { 116, 5 },
+  { 116, 6 }, { 117, 4 }, { 117, 5 }, { 118, 5 }, { 119, 4 }, { 119, 5 }, { 119, 6 }, { 120, 4 }, { 120, 5 }, { 120, 6 },
+  { 121, 4 }, { 121, 5 }, { 121, 6 }, { 121, 7 }, { 122, 4 }, { 122, 5 }, { 122, 6 }, { 123, 5 }, { 126, 60 }, { 126, 61 },
+  { 127, 60 }, { 127, 61 },
 }
 
 -- By difficulty (players[1].difficulty), for each player: colonists, stores, research, Structure Factory
@@ -80,6 +97,7 @@ local DIFFICULTIES = {
       { type = "MiningBeacon", ore = "Common", yield = "Bar3", variant = "Random", at = { 241, 26 }, beacon = true },
       { type = "Fumarole", ore = "Random", yield = "Random", variant = "Random", at = { 66, 5 }, beacon = true },
       { type = "Fumarole", ore = "Random", yield = "Random", variant = "Random", at = { 195, 22 }, beacon = true },
+      { carry_over = true },   -- the stand-in carry-over from here (InitMap's part)
       { type = "CommandCenter", player = 1, at = { 17, 28 } },
       { type = "Tokamak", player = 1, at = { 12, 46 } },
       { type = "StructureFactory", player = 1, at = { 17, 24 } },
@@ -165,6 +183,7 @@ local DIFFICULTIES = {
       { type = "MiningBeacon", ore = "Common", yield = "Bar3", variant = "Random", at = { 241, 26 }, beacon = true },
       { type = "Fumarole", ore = "Random", yield = "Random", variant = "Random", at = { 66, 5 }, beacon = true },
       { type = "Fumarole", ore = "Random", yield = "Random", variant = "Random", at = { 195, 22 }, beacon = true },
+      { carry_over = true },   -- the stand-in carry-over from here (InitMap's part)
       { type = "CommandCenter", player = 1, at = { 17, 28 } },
       { type = "Tokamak", player = 1, at = { 12, 46 } },
       { type = "StructureFactory", player = 1, at = { 17, 24 } },
@@ -250,6 +269,7 @@ local DIFFICULTIES = {
       { type = "MiningBeacon", ore = "Common", yield = "Bar3", variant = "Random", at = { 241, 26 }, beacon = true },
       { type = "Fumarole", ore = "Random", yield = "Random", variant = "Random", at = { 66, 5 }, beacon = true },
       { type = "Fumarole", ore = "Random", yield = "Random", variant = "Random", at = { 195, 22 }, beacon = true },
+      { carry_over = true },   -- the stand-in carry-over from here (InitMap's part)
       { type = "CommandCenter", player = 1, at = { 17, 28 } },
       { type = "Tokamak", player = 1, at = { 12, 46 } },
       { type = "StructureFactory", player = 1, at = { 17, 24 } },
@@ -397,7 +417,10 @@ end
 -- The difficulty's units and beacons in the order the original makes them; `roll = k` rolls the k-th of `rolled`.
 function make_in_order(d, rolled)
   for _, t in ipairs(d.made or {}) do
-    if t.roll then
+    if t.carry_over then
+      -- InitMap's part: from q01.carry when there is one (the rest of the list is the stand-in's).
+      if carry_point() then return end
+    elseif t.roll then
       roll_beacons({ rolled[t.roll] })
     elseif t.beacon then
       local b = copy(t)
@@ -478,6 +501,193 @@ local g = {}                   -- the DLL's groups
 local keep = {}                -- the units it keeps
 local vc = {}                  -- the victory conditions it removes later
 local repairers = {}           -- 0x110162AC: a structure's repairer, by the structure's id and player
+
+-- ---------------------------------------------------------------------------------------------------------------
+-- The carry-over from q01 (InitMap, 0x11004A36; ../../findings/decompile/q02.md). q01's remake keeps it as q01.carry
+-- in OP2Lua's campaign store (its format is in q01Lua.lua). Without one (a mission picked on its own, a core without
+-- the store) the start is the stand-in's, as before.
+-- ---------------------------------------------------------------------------------------------------------------
+
+local carry = { data = nil, difficulty = nil }
+
+local function load_carry_over(name)
+  if not campaign then print("This OP2LuaCore has no campaign store: the stand-in start") return nil end
+  local data, err = campaign.load(name)
+  if not data then print("No " .. name .. ".carry (" .. tostring(err) .. "): the stand-in start") end
+  return data
+end
+
+-- InitMap's distance: the enumerator's squared distance in pixels (32 a tile) shifted right by 9, so 2 x tiles².
+-- It fits the stand-in: of q01's trucks 3, 3.2 and 3.6 tiles from the smelter, only the last (2 x 13 = 26 > 0x19)
+-- was moved.
+local function distance(a, b)
+  local dx, dy = a.x - b.x, a.y - b.y
+  return 2 * (dx * dx + dy * dy)
+end
+
+-- The closest structure to `at` not owned by Eden, a Common Ore Smelter with `smelter` (0x11004B5E).
+local function closest_structure(at, smelter)
+  local best, best_d
+  for id = 1, game.num_players() do
+    if id ~= EDEN then
+      for _, s in ipairs(players[id]:buildings(smelter and "CommonOreSmelter" or nil)) do
+        local dd = distance(s, at)
+        if not best_d or dd < best_d then best, best_d = s, dd end
+      end
+    end
+  end
+  return best, best_d
+end
+
+-- Rebuilds q01's carry-over as InitMap does. Returns the difficulty q01 was played at.
+local function build_carry_over(c)
+  -- 1. The map cells (0x11006737): dozed and rubble get their type and tile, a normal wall a Wall, a 0x1A cell a Tube.
+  for _, r in ipairs(c.cells or {}) do
+    local at, t = { r[1], r[2] }, r[3]
+    if t == 0x15 or t == 0x16 then
+      game.set_cell_type(at, t)
+      if r[4] then game.set_tile(at, r[4]) end
+    elseif t == 0x17 then
+      game.create_wall("Wall", at)
+    elseif t == 0x1A then
+      game.create_tube(at)
+    end
+  end
+  -- 2. Player 1's structures, then Eden's (0x110064F3), each at its saved tile; factories get their bays back.
+  for _, id in ipairs({ HUMAN, EDEN }) do
+    for _, r in ipairs(c.units or {}) do
+      if r.player == id and not r.vehicle then
+        local made = game.create_unit{ type = r.type, player = players[id], at = { r.x, r.y }, weapon = r.weapon,
+                                       exact = true }
+        if made[1] and r.bays then
+          for bay, b in ipairs(r.bays) do
+            if b[1] ~= "None" then made[1]:set_factory_cargo(bay, b[1], b[2]) end
+          end
+        end
+        if id == HUMAN and r.type == "CommandCenter" then players[HUMAN]:center_view({ r.x, r.y }) end
+      end
+    end
+  end
+  -- 3. Player 1's vehicles; Eden's are never made (0x1100690B).
+  local list = {}
+  for _, r in ipairs(c.units or {}) do
+    if r.player == HUMAN and r.vehicle then list[#list + 1] = r end
+  end
+  -- 5-6. From the list's end: a vehicle far from the base is brought to it (0x11004B5E-0x11004C93), then made
+  -- (0x110069DD): trucks empty, ConVecs with their kit, the rest with their weapon, lights on.
+  local has_smelter = #players[HUMAN]:buildings("CommonOreSmelter") > 0
+  for i = #list, 1, -1 do
+    local r = list[i]
+    local at, exact = { r.x, r.y }, true
+    local truck = r.type == "CargoTruck"
+    local s, sd = closest_structure(r, truck and has_smelter)
+    if s then
+      if truck and sd > 0x19 then
+        at, exact = { s.x, s.y }, false
+      elseif sd > 0x50 then
+        local x = s.x - 5 + game.rand(11)
+        at, exact = { x, s.y - 5 + game.rand(11) }, false
+      end
+    end
+    local made = game.create_unit{ type = r.type, player = players[HUMAN], at = at,
+                                   weapon = r.type ~= "ConVec" and not truck and r.weapon or nil, exact = exact }
+    if made[1] and r.type == "ConVec" and r.kit then made[1]:set_kit(r.kit, r.weapon) end
+  end
+  return c.colony and c.colony.difficulty
+end
+
+-- Called where the made lists reach InitMap's part: true when q01.carry was rebuilt (skip the stand-in's units).
+function carry_point()
+  if carry.data then
+    carry.difficulty = build_carry_over(carry.data)
+    return true
+  end
+  for _, t in ipairs(STANDIN_TUBES) do game.create_tube(t) end
+  return false
+end
+
+-- ---------------------------------------------------------------------------------------------------------------
+-- The carry-over writer, the same in q01-q03 (master copy: tools/carry/writer.lua; paste it in whole, OP2Lua has
+-- no require). The original DLL writes Q0N.mis as the game unloads it after a win (0x11005FA7 in q02;
+-- ../../findings/decompile/q02.md, "The carry-over q02 writes"); the remake keeps the same contents with OP2Lua's
+-- campaign store as q0N.carry beside this DLL. Status-bar tiles, Lua's 1-based players, the API's names:
+-- - cells: { x, y, cell type, tile }, for each cell whose type is above 0xF (the tile for dozed and rubble only);
+-- - colony: the human player's difficulty (0-2), food, kids, ore, rare ore, scientists and workers (no RLV count);
+-- - units: every player's, the highest first, structures then vehicles: type, player, x, y, weapon, a ConVec's kit,
+--   a truck's cargo and amount, and a Structure Factory's or Spaceport's six bays ({ kit, weapon or cargo }).
+-- A game started by op2launcher never tells the script it ended, so it's written once every victory condition
+-- still standing has fired (the game then ends as won), and again in on_end when the game reports a win.
+-- ---------------------------------------------------------------------------------------------------------------
+
+local carry_wins = {}
+do
+  local victory = mission.victory
+  mission.victory = function(...)
+    local t = victory(...)
+    carry_wins[#carry_wins + 1] = t
+    return t
+  end
+end
+
+-- Every victory condition still standing has fired for the human player (players[1] in q01-q04).
+local function carry_won()
+  local any = false
+  for _, t in ipairs(carry_wins) do
+    if t.valid then
+      if not t:has_fired(players[1]) then return false end
+      any = true
+    end
+  end
+  return any
+end
+
+local function carry_over(mission_name, difficulty)
+  local size = game.map_size()
+  local cells = {}
+  for y = 1, size.h do
+    for x = 1, size.w do
+      local t = game.cell(x, y).type
+      if t > 0xF then
+        cells[#cells + 1] = (t == 0x15 or t == 0x16) and { x, y, t, game.tile({ x, y }) } or { x, y, t }
+      end
+    end
+  end
+  local p = players[1]
+  local colony = { difficulty = difficulty, food = p.food, kids = p.kids, ore = p.ore, rare_ore = p.rare_ore,
+                   scientists = p.scientists, workers = p.workers }
+  local function named(v) return v and v ~= "None" and v ~= "" and v ~= "Empty" and v or nil end
+  local units = {}
+  local function add(id, u)
+    local r = { type = u.type, player = id, x = u.x, y = u.y, vehicle = u.is_vehicle or nil,
+                weapon = named(u.weapon), kit = u.type == "ConVec" and named(u.kit) or nil }
+    if named(u.cargo) then r.cargo, r.amount = u.cargo, u.cargo_amount end
+    if u.type == "StructureFactory" or u.type == "Spaceport" then
+      r.bays = {}
+      for bay = 1, 6 do
+        local kit, extra = u:factory_cargo(bay)
+        r.bays[bay] = { kit or "None", extra }
+      end
+    end
+    units[#units + 1] = r
+  end
+  for id = game.num_players(), 1, -1 do
+    for _, u in ipairs(players[id]:units()) do if u.is_building then add(id, u) end end
+    for _, u in ipairs(players[id]:units()) do if u.is_vehicle then add(id, u) end end
+  end
+  return { mission = mission_name, tick = game.tick(), colony = colony, cells = cells, units = units }
+end
+
+local function save_carry_over(mission_name, difficulty, why)
+  if not campaign then print("This OP2LuaCore has no campaign store: no carry-over written") return end
+  local data = carry_over(mission_name, difficulty)
+  local ok, err = campaign.save(mission_name, data)
+  print(("Carry-over %s.carry (%s): %s, %d cells, %d units%s"):format(mission_name, why,
+        ok and "saved" or "not saved", #data.cells, #data.units, err and (": " .. err) or ""))
+end
+
+function on_end(result)
+  if result and result.result == "won" then save_carry_over("q02", state.d, "the game reports the win") end
+end
 
 local function make(type, player, at, direction, weapon)
   return game.create_unit{ type = type, player = player, at = at, direction = DIRS[direction or 0],
@@ -1548,14 +1758,18 @@ function setup_mission(difficulty)
   repeating(2000, 5000, quake_anywhere)
   repeating(4000, 4000, raid_south)
   repeating(3200, 3200, raid_north)
+  -- The carry-over for q03, once every victory condition still standing has been met.
+  when(carry_won, function() save_carry_over("q02", state.d, "all the victory conditions met") end)
 end
 
 function on_tick() run_events() end
 
 function on_init()
+  game.message("Renegades v" .. VERSION, false)
   local difficulty = DIFFICULTIES[players[1].difficulty] and players[1].difficulty or "Normal"
   local d = DIFFICULTIES[difficulty]
   print("Difficulty: " .. difficulty)
+  carry.data = load_carry_over("q01")
   make_things(d)
   make_in_order(d, BEACONS.rolled)
   for id, p in pairs(d.players) do make_player(players[id], p) end
@@ -1821,220 +2035,230 @@ function on_init()
   game.set_cell_type({ 2, 64 }, 6)
   game.set_cell_type({ 1, 64 }, 6)
   game.set_cell_type({ 0, 64 }, 6)
-  game.set_cell_type({ 109, 3 }, 21)
-  game.set_tile({ 109, 3 }, 409)
-  game.set_cell_type({ 110, 3 }, 21)
-  game.set_tile({ 110, 3 }, 409)
-  game.set_cell_type({ 111, 3 }, 21)
-  game.set_tile({ 111, 3 }, 409)
-  game.set_cell_type({ 112, 3 }, 21)
-  game.set_tile({ 112, 3 }, 409)
-  game.set_cell_type({ 113, 3 }, 21)
-  game.set_tile({ 113, 3 }, 409)
-  game.set_cell_type({ 114, 3 }, 21)
-  game.set_tile({ 114, 3 }, 409)
-  game.set_cell_type({ 115, 3 }, 21)
-  game.set_tile({ 115, 3 }, 409)
-  game.set_cell_type({ 116, 3 }, 21)
-  game.set_tile({ 116, 3 }, 409)
-  game.set_cell_type({ 117, 3 }, 21)
-  game.set_tile({ 117, 3 }, 409)
-  game.set_cell_type({ 118, 3 }, 21)
-  game.set_tile({ 118, 3 }, 409)
-  game.set_cell_type({ 119, 3 }, 21)
-  game.set_tile({ 119, 3 }, 409)
-  game.set_cell_type({ 120, 3 }, 21)
-  game.set_tile({ 120, 3 }, 409)
-  game.set_cell_type({ 121, 3 }, 21)
-  game.set_tile({ 121, 3 }, 409)
-  game.set_cell_type({ 122, 3 }, 21)
-  game.set_tile({ 122, 3 }, 409)
-  game.set_cell_type({ 123, 3 }, 21)
-  game.set_tile({ 123, 3 }, 409)
-  game.set_cell_type({ 109, 4 }, 21)
-  game.set_tile({ 109, 4 }, 409)
-  game.set_cell_type({ 114, 4 }, 21)
-  game.set_tile({ 114, 4 }, 409)
-  game.set_cell_type({ 118, 4 }, 21)
-  game.set_tile({ 118, 4 }, 409)
-  game.set_cell_type({ 123, 4 }, 21)
-  game.set_tile({ 123, 4 }, 409)
-  game.set_cell_type({ 109, 5 }, 21)
-  game.set_tile({ 109, 5 }, 409)
-  game.set_cell_type({ 109, 6 }, 21)
-  game.set_tile({ 109, 6 }, 409)
-  game.set_cell_type({ 114, 6 }, 21)
-  game.set_tile({ 114, 6 }, 409)
-  game.set_cell_type({ 115, 6 }, 21)
-  game.set_tile({ 115, 6 }, 409)
-  game.set_cell_type({ 117, 6 }, 21)
-  game.set_tile({ 117, 6 }, 409)
-  game.set_cell_type({ 118, 6 }, 21)
-  game.set_tile({ 118, 6 }, 409)
-  game.set_cell_type({ 123, 6 }, 21)
-  game.set_tile({ 123, 6 }, 409)
-  game.set_cell_type({ 109, 7 }, 21)
-  game.set_tile({ 109, 7 }, 409)
-  game.set_cell_type({ 110, 7 }, 21)
-  game.set_tile({ 110, 7 }, 409)
-  game.set_cell_type({ 111, 7 }, 21)
-  game.set_tile({ 111, 7 }, 409)
-  game.set_cell_type({ 113, 7 }, 21)
-  game.set_tile({ 113, 7 }, 409)
-  game.set_cell_type({ 114, 7 }, 21)
-  game.set_tile({ 114, 7 }, 409)
-  game.set_cell_type({ 118, 7 }, 21)
-  game.set_tile({ 118, 7 }, 409)
-  game.set_cell_type({ 119, 7 }, 21)
-  game.set_tile({ 119, 7 }, 409)
-  game.set_cell_type({ 120, 7 }, 21)
-  game.set_tile({ 120, 7 }, 409)
-  game.set_cell_type({ 122, 7 }, 21)
-  game.set_tile({ 122, 7 }, 409)
-  game.set_cell_type({ 123, 7 }, 21)
-  game.set_tile({ 123, 7 }, 409)
-  game.set_cell_type({ 14, 22 }, 21)
-  game.set_tile({ 14, 22 }, 409)
-  game.set_cell_type({ 15, 22 }, 21)
-  game.set_tile({ 15, 22 }, 409)
-  game.set_cell_type({ 16, 22 }, 21)
-  game.set_tile({ 16, 22 }, 409)
-  game.set_cell_type({ 17, 22 }, 21)
-  game.set_tile({ 17, 22 }, 409)
-  game.set_cell_type({ 18, 22 }, 21)
-  game.set_tile({ 18, 22 }, 409)
-  game.set_cell_type({ 19, 22 }, 21)
-  game.set_tile({ 19, 22 }, 409)
-  game.set_cell_type({ 20, 22 }, 21)
-  game.set_tile({ 20, 22 }, 409)
-  game.set_cell_type({ 21, 22 }, 21)
-  game.set_tile({ 21, 22 }, 409)
-  game.set_cell_type({ 22, 22 }, 21)
-  game.set_tile({ 22, 22 }, 409)
-  game.set_cell_type({ 23, 22 }, 21)
-  game.set_tile({ 23, 22 }, 409)
-  game.set_cell_type({ 24, 22 }, 21)
-  game.set_tile({ 24, 22 }, 409)
-  game.set_cell_type({ 14, 23 }, 21)
-  game.set_tile({ 14, 23 }, 409)
-  game.set_cell_type({ 19, 23 }, 21)
-  game.set_tile({ 19, 23 }, 409)
-  game.set_cell_type({ 24, 23 }, 21)
-  game.set_tile({ 24, 23 }, 409)
-  game.set_cell_type({ 14, 24 }, 21)
-  game.set_tile({ 14, 24 }, 409)
-  game.set_cell_type({ 14, 25 }, 21)
-  game.set_tile({ 14, 25 }, 409)
-  game.set_cell_type({ 19, 25 }, 21)
-  game.set_tile({ 19, 25 }, 409)
-  game.set_cell_type({ 24, 25 }, 21)
-  game.set_tile({ 24, 25 }, 409)
-  game.set_cell_type({ 14, 26 }, 21)
-  game.set_tile({ 14, 26 }, 409)
-  game.set_cell_type({ 15, 26 }, 21)
-  game.set_tile({ 15, 26 }, 409)
-  game.set_cell_type({ 16, 26 }, 21)
-  game.set_tile({ 16, 26 }, 409)
-  game.set_cell_type({ 18, 26 }, 21)
-  game.set_tile({ 18, 26 }, 409)
-  game.set_cell_type({ 19, 26 }, 21)
-  game.set_tile({ 19, 26 }, 409)
-  game.set_cell_type({ 20, 26 }, 21)
-  game.set_tile({ 20, 26 }, 409)
-  game.set_cell_type({ 21, 26 }, 21)
-  game.set_tile({ 21, 26 }, 409)
-  game.set_cell_type({ 23, 26 }, 21)
-  game.set_tile({ 23, 26 }, 409)
-  game.set_cell_type({ 24, 26 }, 21)
-  game.set_tile({ 24, 26 }, 409)
-  game.set_cell_type({ 15, 27 }, 21)
-  game.set_tile({ 15, 27 }, 409)
-  game.set_cell_type({ 19, 27 }, 21)
-  game.set_tile({ 19, 27 }, 409)
-  game.set_cell_type({ 15, 28 }, 21)
-  game.set_tile({ 15, 28 }, 409)
-  game.set_cell_type({ 15, 29 }, 21)
-  game.set_tile({ 15, 29 }, 409)
-  game.set_cell_type({ 16, 29 }, 21)
-  game.set_tile({ 16, 29 }, 409)
-  game.set_cell_type({ 18, 29 }, 21)
-  game.set_tile({ 18, 29 }, 409)
-  game.set_cell_type({ 19, 29 }, 21)
-  game.set_tile({ 19, 29 }, 409)
-  game.set_cell_type({ 112, 29 }, 21)
-  game.set_tile({ 112, 29 }, 409)
-  game.set_cell_type({ 113, 29 }, 21)
-  game.set_tile({ 113, 29 }, 409)
-  game.set_cell_type({ 114, 29 }, 21)
-  game.set_tile({ 114, 29 }, 409)
-  game.set_cell_type({ 115, 29 }, 21)
-  game.set_tile({ 115, 29 }, 409)
-  game.set_cell_type({ 112, 30 }, 21)
-  game.set_tile({ 112, 30 }, 409)
-  game.set_cell_type({ 115, 30 }, 21)
-  game.set_tile({ 115, 30 }, 409)
-  game.set_cell_type({ 112, 31 }, 21)
-  game.set_tile({ 112, 31 }, 409)
-  game.set_cell_type({ 113, 31 }, 21)
-  game.set_tile({ 113, 31 }, 409)
-  game.set_cell_type({ 114, 31 }, 21)
-  game.set_tile({ 114, 31 }, 409)
-  game.set_cell_type({ 115, 31 }, 21)
-  game.set_tile({ 115, 31 }, 409)
-  game.set_cell_type({ 10, 44 }, 21)
-  game.set_tile({ 10, 44 }, 1670)
-  game.set_cell_type({ 11, 44 }, 21)
-  game.set_tile({ 11, 44 }, 1670)
-  game.set_cell_type({ 12, 44 }, 21)
-  game.set_tile({ 12, 44 }, 1670)
-  game.set_cell_type({ 13, 44 }, 21)
-  game.set_tile({ 13, 44 }, 1670)
-  game.set_cell_type({ 10, 45 }, 21)
-  game.set_tile({ 10, 45 }, 1670)
-  game.set_cell_type({ 13, 45 }, 21)
-  game.set_tile({ 13, 45 }, 1670)
-  game.set_cell_type({ 10, 46 }, 21)
-  game.set_tile({ 10, 46 }, 1670)
-  game.set_cell_type({ 13, 46 }, 21)
-  game.set_tile({ 13, 46 }, 1670)
-  game.set_cell_type({ 10, 47 }, 21)
-  game.set_tile({ 10, 47 }, 1670)
-  game.set_cell_type({ 11, 47 }, 21)
-  game.set_tile({ 11, 47 }, 1670)
-  game.set_cell_type({ 12, 47 }, 21)
-  game.set_tile({ 12, 47 }, 1670)
-  game.set_cell_type({ 13, 47 }, 21)
-  game.set_tile({ 13, 47 }, 1670)
-  game.set_cell_type({ 125, 59 }, 21)
-  game.set_tile({ 125, 59 }, 409)
-  game.set_cell_type({ 126, 59 }, 21)
-  game.set_tile({ 126, 59 }, 409)
-  game.set_cell_type({ 127, 59 }, 21)
-  game.set_tile({ 127, 59 }, 409)
-  game.set_cell_type({ 128, 59 }, 21)
-  game.set_tile({ 128, 59 }, 409)
-  game.set_cell_type({ 125, 60 }, 21)
-  game.set_tile({ 125, 60 }, 409)
-  game.set_cell_type({ 128, 60 }, 21)
-  game.set_tile({ 128, 60 }, 409)
-  game.set_cell_type({ 125, 61 }, 21)
-  game.set_tile({ 125, 61 }, 409)
-  game.set_cell_type({ 128, 61 }, 21)
-  game.set_tile({ 128, 61 }, 409)
-  game.set_cell_type({ 125, 62 }, 21)
-  game.set_tile({ 125, 62 }, 409)
-  game.set_cell_type({ 126, 62 }, 21)
-  game.set_tile({ 126, 62 }, 409)
-  game.set_cell_type({ 127, 62 }, 21)
-  game.set_tile({ 127, 62 }, 409)
-  game.set_cell_type({ 128, 62 }, 21)
-  game.set_tile({ 128, 62 }, 409)
+  -- The stand-in carry-over's dozed cells (Q01.mis), when there's no q01.carry.
+  if not carry.data then
+    game.set_cell_type({ 109, 3 }, 21)
+    game.set_tile({ 109, 3 }, 409)
+    game.set_cell_type({ 110, 3 }, 21)
+    game.set_tile({ 110, 3 }, 409)
+    game.set_cell_type({ 111, 3 }, 21)
+    game.set_tile({ 111, 3 }, 409)
+    game.set_cell_type({ 112, 3 }, 21)
+    game.set_tile({ 112, 3 }, 409)
+    game.set_cell_type({ 113, 3 }, 21)
+    game.set_tile({ 113, 3 }, 409)
+    game.set_cell_type({ 114, 3 }, 21)
+    game.set_tile({ 114, 3 }, 409)
+    game.set_cell_type({ 115, 3 }, 21)
+    game.set_tile({ 115, 3 }, 409)
+    game.set_cell_type({ 116, 3 }, 21)
+    game.set_tile({ 116, 3 }, 409)
+    game.set_cell_type({ 117, 3 }, 21)
+    game.set_tile({ 117, 3 }, 409)
+    game.set_cell_type({ 118, 3 }, 21)
+    game.set_tile({ 118, 3 }, 409)
+    game.set_cell_type({ 119, 3 }, 21)
+    game.set_tile({ 119, 3 }, 409)
+    game.set_cell_type({ 120, 3 }, 21)
+    game.set_tile({ 120, 3 }, 409)
+    game.set_cell_type({ 121, 3 }, 21)
+    game.set_tile({ 121, 3 }, 409)
+    game.set_cell_type({ 122, 3 }, 21)
+    game.set_tile({ 122, 3 }, 409)
+    game.set_cell_type({ 123, 3 }, 21)
+    game.set_tile({ 123, 3 }, 409)
+    game.set_cell_type({ 109, 4 }, 21)
+    game.set_tile({ 109, 4 }, 409)
+    game.set_cell_type({ 114, 4 }, 21)
+    game.set_tile({ 114, 4 }, 409)
+    game.set_cell_type({ 118, 4 }, 21)
+    game.set_tile({ 118, 4 }, 409)
+    game.set_cell_type({ 123, 4 }, 21)
+    game.set_tile({ 123, 4 }, 409)
+    game.set_cell_type({ 109, 5 }, 21)
+    game.set_tile({ 109, 5 }, 409)
+    game.set_cell_type({ 109, 6 }, 21)
+    game.set_tile({ 109, 6 }, 409)
+    game.set_cell_type({ 114, 6 }, 21)
+    game.set_tile({ 114, 6 }, 409)
+    game.set_cell_type({ 115, 6 }, 21)
+    game.set_tile({ 115, 6 }, 409)
+    game.set_cell_type({ 117, 6 }, 21)
+    game.set_tile({ 117, 6 }, 409)
+    game.set_cell_type({ 118, 6 }, 21)
+    game.set_tile({ 118, 6 }, 409)
+    game.set_cell_type({ 123, 6 }, 21)
+    game.set_tile({ 123, 6 }, 409)
+    game.set_cell_type({ 109, 7 }, 21)
+    game.set_tile({ 109, 7 }, 409)
+    game.set_cell_type({ 110, 7 }, 21)
+    game.set_tile({ 110, 7 }, 409)
+    game.set_cell_type({ 111, 7 }, 21)
+    game.set_tile({ 111, 7 }, 409)
+    game.set_cell_type({ 113, 7 }, 21)
+    game.set_tile({ 113, 7 }, 409)
+    game.set_cell_type({ 114, 7 }, 21)
+    game.set_tile({ 114, 7 }, 409)
+    game.set_cell_type({ 118, 7 }, 21)
+    game.set_tile({ 118, 7 }, 409)
+    game.set_cell_type({ 119, 7 }, 21)
+    game.set_tile({ 119, 7 }, 409)
+    game.set_cell_type({ 120, 7 }, 21)
+    game.set_tile({ 120, 7 }, 409)
+    game.set_cell_type({ 122, 7 }, 21)
+    game.set_tile({ 122, 7 }, 409)
+    game.set_cell_type({ 123, 7 }, 21)
+    game.set_tile({ 123, 7 }, 409)
+    game.set_cell_type({ 14, 22 }, 21)
+    game.set_tile({ 14, 22 }, 409)
+    game.set_cell_type({ 15, 22 }, 21)
+    game.set_tile({ 15, 22 }, 409)
+    game.set_cell_type({ 16, 22 }, 21)
+    game.set_tile({ 16, 22 }, 409)
+    game.set_cell_type({ 17, 22 }, 21)
+    game.set_tile({ 17, 22 }, 409)
+    game.set_cell_type({ 18, 22 }, 21)
+    game.set_tile({ 18, 22 }, 409)
+    game.set_cell_type({ 19, 22 }, 21)
+    game.set_tile({ 19, 22 }, 409)
+    game.set_cell_type({ 20, 22 }, 21)
+    game.set_tile({ 20, 22 }, 409)
+    game.set_cell_type({ 21, 22 }, 21)
+    game.set_tile({ 21, 22 }, 409)
+    game.set_cell_type({ 22, 22 }, 21)
+    game.set_tile({ 22, 22 }, 409)
+    game.set_cell_type({ 23, 22 }, 21)
+    game.set_tile({ 23, 22 }, 409)
+    game.set_cell_type({ 24, 22 }, 21)
+    game.set_tile({ 24, 22 }, 409)
+    game.set_cell_type({ 14, 23 }, 21)
+    game.set_tile({ 14, 23 }, 409)
+    game.set_cell_type({ 19, 23 }, 21)
+    game.set_tile({ 19, 23 }, 409)
+    game.set_cell_type({ 24, 23 }, 21)
+    game.set_tile({ 24, 23 }, 409)
+    game.set_cell_type({ 14, 24 }, 21)
+    game.set_tile({ 14, 24 }, 409)
+    game.set_cell_type({ 14, 25 }, 21)
+    game.set_tile({ 14, 25 }, 409)
+    game.set_cell_type({ 19, 25 }, 21)
+    game.set_tile({ 19, 25 }, 409)
+    game.set_cell_type({ 24, 25 }, 21)
+    game.set_tile({ 24, 25 }, 409)
+    game.set_cell_type({ 14, 26 }, 21)
+    game.set_tile({ 14, 26 }, 409)
+    game.set_cell_type({ 15, 26 }, 21)
+    game.set_tile({ 15, 26 }, 409)
+    game.set_cell_type({ 16, 26 }, 21)
+    game.set_tile({ 16, 26 }, 409)
+    game.set_cell_type({ 18, 26 }, 21)
+    game.set_tile({ 18, 26 }, 409)
+    game.set_cell_type({ 19, 26 }, 21)
+    game.set_tile({ 19, 26 }, 409)
+    game.set_cell_type({ 20, 26 }, 21)
+    game.set_tile({ 20, 26 }, 409)
+    game.set_cell_type({ 21, 26 }, 21)
+    game.set_tile({ 21, 26 }, 409)
+    game.set_cell_type({ 23, 26 }, 21)
+    game.set_tile({ 23, 26 }, 409)
+    game.set_cell_type({ 24, 26 }, 21)
+    game.set_tile({ 24, 26 }, 409)
+    game.set_cell_type({ 15, 27 }, 21)
+    game.set_tile({ 15, 27 }, 409)
+    game.set_cell_type({ 19, 27 }, 21)
+    game.set_tile({ 19, 27 }, 409)
+    game.set_cell_type({ 15, 28 }, 21)
+    game.set_tile({ 15, 28 }, 409)
+    game.set_cell_type({ 15, 29 }, 21)
+    game.set_tile({ 15, 29 }, 409)
+    game.set_cell_type({ 16, 29 }, 21)
+    game.set_tile({ 16, 29 }, 409)
+    game.set_cell_type({ 18, 29 }, 21)
+    game.set_tile({ 18, 29 }, 409)
+    game.set_cell_type({ 19, 29 }, 21)
+    game.set_tile({ 19, 29 }, 409)
+    game.set_cell_type({ 112, 29 }, 21)
+    game.set_tile({ 112, 29 }, 409)
+    game.set_cell_type({ 113, 29 }, 21)
+    game.set_tile({ 113, 29 }, 409)
+    game.set_cell_type({ 114, 29 }, 21)
+    game.set_tile({ 114, 29 }, 409)
+    game.set_cell_type({ 115, 29 }, 21)
+    game.set_tile({ 115, 29 }, 409)
+    game.set_cell_type({ 112, 30 }, 21)
+    game.set_tile({ 112, 30 }, 409)
+    game.set_cell_type({ 115, 30 }, 21)
+    game.set_tile({ 115, 30 }, 409)
+    game.set_cell_type({ 112, 31 }, 21)
+    game.set_tile({ 112, 31 }, 409)
+    game.set_cell_type({ 113, 31 }, 21)
+    game.set_tile({ 113, 31 }, 409)
+    game.set_cell_type({ 114, 31 }, 21)
+    game.set_tile({ 114, 31 }, 409)
+    game.set_cell_type({ 115, 31 }, 21)
+    game.set_tile({ 115, 31 }, 409)
+    game.set_cell_type({ 10, 44 }, 21)
+    game.set_tile({ 10, 44 }, 1670)
+    game.set_cell_type({ 11, 44 }, 21)
+    game.set_tile({ 11, 44 }, 1670)
+    game.set_cell_type({ 12, 44 }, 21)
+    game.set_tile({ 12, 44 }, 1670)
+    game.set_cell_type({ 13, 44 }, 21)
+    game.set_tile({ 13, 44 }, 1670)
+    game.set_cell_type({ 10, 45 }, 21)
+    game.set_tile({ 10, 45 }, 1670)
+    game.set_cell_type({ 13, 45 }, 21)
+    game.set_tile({ 13, 45 }, 1670)
+    game.set_cell_type({ 10, 46 }, 21)
+    game.set_tile({ 10, 46 }, 1670)
+    game.set_cell_type({ 13, 46 }, 21)
+    game.set_tile({ 13, 46 }, 1670)
+    game.set_cell_type({ 10, 47 }, 21)
+    game.set_tile({ 10, 47 }, 1670)
+    game.set_cell_type({ 11, 47 }, 21)
+    game.set_tile({ 11, 47 }, 1670)
+    game.set_cell_type({ 12, 47 }, 21)
+    game.set_tile({ 12, 47 }, 1670)
+    game.set_cell_type({ 13, 47 }, 21)
+    game.set_tile({ 13, 47 }, 1670)
+    game.set_cell_type({ 125, 59 }, 21)
+    game.set_tile({ 125, 59 }, 409)
+    game.set_cell_type({ 126, 59 }, 21)
+    game.set_tile({ 126, 59 }, 409)
+    game.set_cell_type({ 127, 59 }, 21)
+    game.set_tile({ 127, 59 }, 409)
+    game.set_cell_type({ 128, 59 }, 21)
+    game.set_tile({ 128, 59 }, 409)
+    game.set_cell_type({ 125, 60 }, 21)
+    game.set_tile({ 125, 60 }, 409)
+    game.set_cell_type({ 128, 60 }, 21)
+    game.set_tile({ 128, 60 }, 409)
+    game.set_cell_type({ 125, 61 }, 21)
+    game.set_tile({ 125, 61 }, 409)
+    game.set_cell_type({ 128, 61 }, 21)
+    game.set_tile({ 128, 61 }, 409)
+    game.set_cell_type({ 125, 62 }, 21)
+    game.set_tile({ 125, 62 }, 409)
+    game.set_cell_type({ 126, 62 }, 21)
+    game.set_tile({ 126, 62 }, 409)
+    game.set_cell_type({ 127, 62 }, 21)
+    game.set_tile({ 127, 62 }, 409)
+    game.set_cell_type({ 128, 62 }, 21)
+    game.set_tile({ 128, 62 }, 409)
+  end
   game.set_cell_type({ 195, 22 }, 6)
   game.set_daylight_everywhere(false)
   game.set_daylight_moves(true)
   game.free_morale()
   for _, r in ipairs(LAVA_POSSIBLE) do game.set_lava_possible(r) end
 
+  -- The difficulty check (0x11004A20): q01 played at another difficulty sets the mission's own (not the player's).
+  -- The DLL says it in a message box; OP2Lua has none, so it's a message.
+  local NAMES = { [0] = "Easy", "Normal", "Hard" }
+  if carry.difficulty and NAMES[carry.difficulty] and NAMES[carry.difficulty] ~= difficulty then
+    game.message("You're cheating ! Difficulty reset to " .. ({ [0] = "easy", "medium", "hard" })[carry.difficulty] .. " :-)")
+    difficulty = NAMES[carry.difficulty]
+  end
   setup_mission(difficulty)
 end
 
@@ -2042,8 +2266,10 @@ end
 -- - Measured against the DLL in the game (q02.md): every unit matches at tick 1, and Plymouth's convoy and
 --   reinforcements come on the same ticks at every difficulty. Eden's own AI drifts from tick 100-500 (a factory a
 --   little early, trucks a tile apart); why is open.
--- - The start is the stand-in carry-over (q01 won at tick 2900 in the harness), baked in by op2dll; the DLL reads
---   Q01.mis. So there is no "You're cheating!" check, and InitMap's moves of far-off vehicles are already done.
+-- - The start is rebuilt from q01.carry, which q01's remake writes when it's won, in place of Q01.mis. Without
+--   one, it's the stand-in carry-over (q01 won at tick 2900 in the harness), baked in by op2dll, with InitMap's
+--   moves of far-off vehicles already done. The "You're cheating!" check is a message, not a message box.
+--   InitMap's distance is taken as 2 x tiles² (squared pixels >> 9), which fits the stand-in's one moved truck.
 -- - A failure condition the DLL lacks: lost with no Command Center and no ConVec. Capping the scorched-earth team is
 --   in ../../TODO.md.
 -- - Messages go to the message list: the DLL points "New mission objective..." at the first Standard Lab, and shows
