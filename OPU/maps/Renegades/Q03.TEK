@@ -1,0 +1,908 @@
+; Outpost 2: Divided Destiny
+; Research : Plymouth mission 3
+;
+;
+
+;******************************************************************************
+; Group 0:  Basic Lab
+;******************************************************************************
+
+BEGIN_TECH "Basic Sciences" 02701
+    CATEGORY        1
+    DESCRIPTION     "Our boptronics database has been restored.  We will soon be able to develop new processes, techniques, and devices."
+    TEASER          "Astronomy, Boptronics, Chemistry and Planetary databases, as well as our Social Sciences database have been destroyed. Reassembling this data is a top priority for our survival."
+    COST            500
+    MAX_SCIENTISTS  5
+    LAB             1
+END_TECH
+
+BEGIN_TECH "Cybernetic Teleoperation" 03401
+    CATEGORY        4
+    DESCRIPTION     "Structure Factories may now produce Robot Command Center and Vehicle Factory structure kits.  _______________________________________ Our research has resulted in a specialized variant of the Command Center, with dedicated computers and communications capabilities.  In addition, all vehicle designs now include the less expensive Noesis computer, utilizing elements of the Savant technology.  This transfers much of the computing burden from the Robot Command Center to the vehicle itself."
+    TEASER          "Allows production of Robot Command Center and Vehicle Factory structure kits at the Structure Factory.  _______________________________________ The Cybernetic Teleoperation database was also destroyed when The Council blew up our lab at the mining outpost. We need to reconstruct it to be able to build more vehicles."
+    REQUIRES        02701
+    COST            600
+    MAX_SCIENTISTS  5
+    LAB             1
+END_TECH
+
+BEGIN_TECH "Seismology" 03201
+    CATEGORY        10
+    DESCRIPTION     "Early warning of seismic events now available. _______________________________________  We have developed equipment to detect certain hydrogeochemical early warning signals of seismic events.  Among the most reliable indicators are variations in the concentration of radon and carbon dioxide in the molten salts found in deep bore wells or in fumaroles.  These warnings should give us some time to idle structures in the vicinity of the epicenter, reducing damage to them."
+    TEASER          "Gives early warning of seismic events. _______________________________________ All our previous research on the geology of New Terra was put together into a database system. This database needs to be reconstructed in order to predict future quakes."
+    REQUIRES        02701
+    COST            600
+    MAX_SCIENTISTS  5
+    LAB             1
+END_TECH 
+
+BEGIN_TECH "Advanced Experimentation" 02706
+    CATEGORY        1
+    DESCRIPTION     "Standard Lab construction plans _______________________________________ We can now begin contruction of the Standard Lab structure kits. The Basic Lab is now obsolete and has been removed from the list."
+    TEASER          "Standard Lab construction plans _______________________________________ Our Basic Laboratory has served us well, but we need a new lab where more advanced experiments can be carried out."
+    REQUIRES        03201
+    REQUIRES        03401
+    COST            600
+    MAX_SCIENTISTS  5
+    LAB             1
+END_TECH
+
+;******************************************************************************
+; Group I:  No predecessors
+;******************************************************************************
+
+BEGIN_TECH "Focused Microwave Projection" 03408
+    CATEGORY        7
+    DESCRIPTION     "The Microwave weapon is now available.  Structure Factories may now produce Guard Post structure kits.  _______________________________________ We have refined the technology used in transmitting power between structures.  Our new emitters are capable of projecting a high-intensity beam of microwaves which will inflict heat damage on the target."
+    TEASER          "Makes the Microwave weapon available.  Allows production of Guard Post structure kits at the Structure Factory.  _______________________________________ Inter-colonial relations remain poor, making it prudent to develop some kind of defensive capability.  Our most promising research path lies in a refinement of the Microwave technology we use for transmitting power from our Tokamaks to the rest of the colony."
+    EDEN_COST       0
+    PLYMOUTH_COST   1200
+    MAX_SCIENTISTS  10
+    LAB             2
+END_TECH
+
+BEGIN_TECH "Environmental Psychology" 03406
+    CATEGORY        9
+    DESCRIPTION     "Residence capacity increased.  _______________________________________ Our expanded knowledge of the causes and effects of crowding and environmental and situational stressors has enabled us to redesign our Residences.  We can now house more people in the same space, while improving Morale."
+    TEASER          "Increases Residence capacity.  _______________________________________ Environmental Psychology studies the relationships between human behaviors and the environments in which they occur.  The forced evacuation of our old colony site has increased the stress on our Colonists; additional research in this field may help us to create a more supportive environment and improve Morale."
+    IMPROVE_DESC    "Increased Colonist capacity"
+    EDEN_COST       1500
+    PLYMOUTH_COST   800
+    MAX_SCIENTISTS  12
+    LAB             2
+    UNIT_PROP RESIDENCE Production_Capacity 35
+END_TECH
+
+BEGIN_TECH "Hydroponic Growing Media" 03403
+    CATEGORY        5
+    DESCRIPTION     "Food production increased.  _______________________________________ By adjusting the nutrients in the liquid in which our hydroponic crops are grown, we have been able to increase production at our Agridomes by 25%."
+    TEASER          "Increases Food production.  _______________________________________ Our Agridomes use a variety of methods, including Hydroponics (soilless farming) to fill our Food requirements.  Some of our Agricultural Workers have ideas on ways to improve the growing medium in which our Hydroponic crops are grown."
+    IMPROVE_DESC    "Increased Food production"
+    EDEN_COST       1600
+    PLYMOUTH_COST   900
+    MAX_SCIENTISTS  11
+    LAB             2
+    UNIT_PROP AGRIDOME Production_Capacity 50
+END_TECH
+
+BEGIN_TECH "Offspring Enhancement" 03304
+    CATEGORY        11
+    DESCRIPTION     "Structure Factories may now produce Nursery structure kits.  _______________________________________ Based on the data developed in the Human Genome Project, completed a few years before the destruction of Earth, our Offspring Enhancement program includes selection of genetically superior children from our gene banks, in vitro gestation, and fertility enhancement."
+    TEASER          "Allows production of Nursery structure kits at the Structure Factory.  _______________________________________ With our population dwindling, we must find ways of increasing our numbers. This project is designed to find ways of increasing the birth rate as well as improving the health of our children." 
+    EDEN_COST       600
+    PLYMOUTH_COST   300
+    MAX_SCIENTISTS  6
+    LAB             2
+END_TECH
+
+BEGIN_TECH "Research Training Programs" 03305
+    CATEGORY        9
+    DESCRIPTION     "Structure Factories may now produce University structure kits.  _______________________________________ Our new educational curriculum for training scientists includes intensive class work, independent study with Savant computers, VR simulations, and internships at the research labs."
+    TEASER          "Allows production of University and Advanced Lab structure kits at the Structure Factory.  _______________________________________ A lack of trained workers and scientists is hampering our colony's efforts.  We need to develop a curricula that will educate our workforce and expand our research staff."
+    EDEN_COST       300
+    PLYMOUTH_COST   300
+    MAX_SCIENTISTS  5
+    LAB             2
+END_TECH
+
+BEGIN_TECH "Vulcanology" 03202
+    CATEGORY        10
+    DESCRIPTION     "Early warning of volcanic eruptions now available. _______________________________________ Using data from our planetary sciences database as well as investigations of volcanoes and magma vents here on New Terra, we have developed an early warning system that will accurately predict volcanic eruptions.  Our dual-method monitoring system uses seismometers to measure rock movement that may indicate rising magma in the planet's crust and correlation spectrometers that measure sulfur dioxide in plumes rising out of volcanic craters."
+    TEASER          "Gives early warning of volcanic eruptions. _______________________________________ Recent volcanic activity on New Terra threatens our colony.  To protect our colonists, we need to develop a method of predicting eruptions so that we can safely evacuate our colonists."
+    REQUIRES        03201
+    EDEN_COST       2000
+    PLYMOUTH_COST   1300
+    MAX_SCIENTISTS  10
+    LAB             2
+END_TECH 
+
+;******************************************************************************
+; Mission 3 research
+;******************************************************************************
+
+BEGIN_TECH "Emergency Response Systems" 03301
+    CATEGORY        11
+    DESCRIPTION     "Structure Factories may now produce DIRT structure kits.  _______________________________________ Disaster Instant Response Teams (DIRTs) can reduce damage to structures.  Once the DIRT structure has been deployed, DIRT members trained in emergency medical care and structural reinforcement will be on the scene in a matter of seconds."
+    TEASER          "Allows production of DIRT structure kits at the Structure Factory.  _______________________________________ Given the new dangers confronting our colony, we need more protection against disaster than our emergency shelters are able to provide. This project will develop new methods, tools, and techniques to respond to structural damage."
+    COST            1000
+    MAX_SCIENTISTS  10
+    LAB             2
+END_TECH
+
+BEGIN_TECH "Health Maintenance" 03303
+    CATEGORY        11
+    DESCRIPTION     "Structure Factories may now produce Medical Center structure kits.  _______________________________________ Medical Center personnel are trained in a variety of techniques of preventive medicine as well as the treatment of illness and injury.  Each Medical Center can support the health needs of up to 40 colonists, improving the health and morale of the colony."
+    TEASER          "Allows production of Medical Center structure kits at the Structure Factory.  _______________________________________ Although our emergency medical systems are adequate to deal with accidents and disasters, our people are suffering from a lack of regular medical care.  We could exploit the vast medical knowledge in our databases to develop a regimen of health maintenance practices."
+    EDEN_COST       700
+    PLYMOUTH_COST   900
+    MAX_SCIENTISTS  7
+    LAB             2
+END_TECH
+
+BEGIN_TECH "Increased Superconductivity" 03402
+    CATEGORY        3
+    DESCRIPTION     "Tokamak Power output increased.  _______________________________________ Our research into High-Temperature Superconductivity has resulted in the discovery of an alloy that is superconductive at 241 degrees Kelvin (-32 degrees Celsius), almost 90 degrees higher than the councils superconductors, increasing Tokamak power output dramaticly."
+    TEASER          "Increases Tokamak Power output.  _______________________________________ Superconductivity is the ability of certain materials to conduct electric current with no resistance and extremely low losses.  The best superconductive materials we have require an operating temperature of 152 degrees Kelvin (-121 degrees Celsius). Many new applications could be developed with a significant increase in the temperature of superconduction."
+    IMPROVE_DESC    "Increased Power output"
+    COST   	        1400
+    MAX_SCIENTISTS  10
+    LAB             3
+    UNIT_PROP TOKAMAK Production_Capacity 320
+END_TECH
+
+BEGIN_TECH "Redesigned Vehicle Power Supply" 03901
+    CATEGORY        4
+    DESCRIPTION     "Cargo Truck, Robo-Dozer, and Earthworker speeds improved.  _______________________________________ The new T-10 cold-fusion power supply has been installed in all Cargo Trucks, Robo-Dozers and Earthworkers, replacing the Plymouth R-2000 model.  The application of our Increased Superconductivity technology has increased the speed of these vehicles."
+    TEASER          "Improves Cargo Truck, Robo-Dozer, and Earthworker speeds.  _______________________________________ Several of the vehicle models we use are powered by the R-2000 cool-fusion plant.  Our work with Increased Superconductivity may be used to build a new power supply."
+    IMPROVE_DESC    "Increased speed"
+    REQUIRES        03402
+    EDEN_COST       1400
+    PLYMOUTH_COST   1600
+    MAX_SCIENTISTS  11
+    LAB             2
+    UNIT_PROP BIG_TRUCK Move_Speed 4
+    UNIT_PROP WALL_TRUCK Move_Speed 4
+    UNIT_PROP BULL_DOZER Move_Speed 5
+END_TECH
+
+BEGIN_TECH "Disaster-Resistant Housing" 08105
+    CATEGORY        9
+    DESCRIPTION     "Structure Factories may now produce Reinforced Residence structure kits.  _______________________________________ Rather than alter the existing Residence plan, we have designed a new Reinforced Residence, capable of withstanding more serious disaster.  The original Residence structure is still available, at lower cost, for use in areas deemed to be less prone to seismic activity."
+    TEASER          "Allows production of the Reinforced Residence structure kit at the Structure Factory. _______________________________________ The increasing frequency and strength of the seismic events are making our Residence structures dangerous places to be.  This project will seek to alter the design of the Residence to make it more able to withstand these dangers."
+    REQUIRES        03406
+    EDEN_COST       -1
+    PLYMOUTH_COST   600
+    MAX_SCIENTISTS  12
+    LAB             2
+END_TECH
+
+BEGIN_TECH "Mobile Weapons Platform" 03851
+    CATEGORY        4
+    DESCRIPTION     "Vehicle Factories may now produce Lynx.  _______________________________________ The Lynx light combat chassis is a design adapted from existing vehicles.  The Lynx includes light armor-plating and a weapons hard point, to which any kind of turret may be attached."
+    TEASER          "Allows production of Lynx at the Vehicle Factory.  _______________________________________ While our Command Center staff is quite pleased with the Lynx supplied by the Council, they point out that after our last mission we need to start looking out for our own interests.  At their suggestion, our Scientists have outlined a project for developing a mobile weapons platform."
+    REQUIRES        03401
+    REQUIRES        03408
+    EDEN_COST       1400
+    PLYMOUTH_COST   1600
+    MAX_SCIENTISTS  12
+    LAB             3
+END_TECH
+
+BEGIN_TECH "Reconstructed Spider Database" 05052
+    CATEGORY        4
+    DESCRIPTION     "Structure Factories may now produce Garage structure kits.  _______________________________________ Repair-spiders, installed at the Garage, are capable of doing most vehicle repairs. Our scientists also believe it is possible to develop a more robust version for field-repairs."
+    TEASER          "Allows production of Garage structure kits at the Structure Factory.  _______________________________________ Our scientists have uncovered the old Plymouth Spider-robot design plans. If our cybernetics experts can work out the schematics, we can start creating the new repair-spiders."
+    REQUIRES        03401
+    EDEN_COST       -1
+    PLYMOUTH_COST   1200
+    MAX_SCIENTISTS  8
+    LAB             2
+END_TECH
+
+BEGIN_TECH "Metals Reclamation" 03302
+    CATEGORY        6
+    DESCRIPTION     "Structure Factories may now produce GORF structure kits.  _______________________________________ The Garbage and Ore Recycling Facility (GORF) uses a variant of the hot-cracking technology used at the Common Ore Smelter to extract usable Metals from deconstructed structures, unneeded structure kits, and rubble."
+    TEASER          "Allows production of GORF structure kits at the Structure Factory.  _______________________________________ With our growing needs, we can no longer afford to overlook any possible sources of Metals.  A few adaptations to our current Smelter technology may enable us to reclaim some of the materials in structures we no longer need."
+    EDEN_COST       700
+    PLYMOUTH_COST   900
+    MAX_SCIENTISTS  7
+    LAB             2
+END_TECH
+
+BEGIN_TECH "Dissipating Adhesives" 05202
+    CATEGORY        7
+    DESCRIPTION     "The StickyFoam weapon is now available.  _______________________________________  StickyFoam is a powerful adhesive foam that evaporates after a short period of time.  Our experiments to find a use for StickyFoam were largely unsuccessful, but we have developed the foam into a weapon system.  Enemy vehicles sprayed with StickyFoam will be immobilized briefly, allowing our units an opportunity to escape or bring up reinforcements."
+    TEASER          "Makes the StickyFoam weapon available.  _______________________________________ One of our researchers, experimenting during his off-duty hours, discovered a peculiar substance:  a foam that acted as a powerful adhesive, but evaporated after a short period of time.  This is such a fascinating material that we would like to run some experiments on it to find potential applications."
+    REQUIRES        03603	; microwave
+    REQUIRES        03851	; lynx
+    COST            1600
+    MAX_SCIENTISTS  10
+    LAB             2
+    UNIT_PROP FOAM Penetration_Damage 50		; shorter evaporation then standard foam
+END_TECH 
+
+;******************************************************************************
+; Plymouth Council EXTRA technologies
+;******************************************************************************
+
+BEGIN_TECH "Rocket Launcher" 05602
+    CATEGORY        7
+    DESCRIPTION     "The RPG weapon is now available.  _______________________________________  Our project has prepared the way for the development of a launch facility.  As a side benefit, we have used this technology to produce a new defensive system, using Rocket Propelled Grenades (RPGs) to deliver an explosive charge."
+    TEASER          "Makes the RPG weapon available.  _______________________________________ As it begins to appear that the microbe Eden has released will eventually make New Terra uninhabitable, we must begin looking for ways to evacuate the planet.  The first step in developing launch capabilities is a research project in rocket propulsion."
+    REQUIRES        05599
+    EDEN_COST       -1
+    PLYMOUTH_COST   2000
+    MAX_SCIENTISTS  12
+    LAB             3
+END_TECH 
+
+; Used to increase the armor of the refugees evac transport in mission 3
+BEGIN_TECH "Reinforced evacuation transport" 12898
+    CATEGORY        4
+    COST            0
+    IMPROVE_DESC    "Increased armor"
+    UNIT_PROP MOBILE_HOME Armor 2
+    UNIT_PROP MOBILE_HOME Hit_Points 250
+END_TECH
+
+; Used to slow down AI scouts in mission 4
+BEGIN_TECH "Scout speed reduction" 12899
+    CATEGORY        4
+    COST            0
+    UNIT_PROP SCOUT Move_Speed 3
+END_TECH
+
+
+;******************************************************************************
+
+BEGIN_TECH "Large-Scale Optical Resonators" 03407
+    CATEGORY        7
+    COST            0
+END_TECH
+
+BEGIN_TECH "Metallogeny" 03405
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Automated Diagnostic Examinations" 05307
+    CATEGORY        11
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Consumerism" 05101
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "DIRT Procedural Review" 05305
+    CATEGORY        11
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Disaster-Resistant Housing" 08105
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Expanded Housing" 08104
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Heat Dissipation Systems" 05601
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Hypnopaedia" 05309
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Hypnopaedia" 05310
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Leisure Studies" 03306
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH  "Public Performance" 05108
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Rare Ore Processing" 05110
+    CATEGORY        6
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Recycler Postprocessing" 05306
+    CATEGORY        6
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Robot-Assist Mechanic" 05051
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Robot-Assist Mechanic" 05051
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Robotic Image Processing" 05318
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Advanced Combat Chassis" 05201
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Advanced Robotic Manipulator Arm" 07213
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Advanced Robotic Manipulator Arm" 07214
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Enhanced Defensive Fortifications" 08306
+    CATEGORY        2
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Explosive Charges" 07102
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Forum Reconfiguration" 05408
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Geothermal Power" 05115
+    CATEGORY        3
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Hot-Cracking Column Efficiency" 07202
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Independent Turret Power Systems" 05111
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Lava Defenses" 05701
+    CATEGORY        2
+    COST            -1
+END_TECH
+
+BEGIN_TECH  "Magnetohydrodynamics" 05107
+    CATEGORY        3
+    COST            -1
+END_TECH 
+
+BEGIN_TECH  "Meteorology" 05302
+    CATEGORY        10
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Multitainment Console Upgrade" 08307
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Rare Ore Extraction" 07201
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Reinforced Vehicle Construction" 05317
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Scout-class Drive Train Refit" 07206
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Smelter Postprocessing" 07203
+    CATEGORY        6
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Dual-Turret Weapons Systems" 08201
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Directional Magnetic Fields" 05506
+    CATEGORY        7
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Electromagnetic Pulsing" 05508
+    CATEGORY        7
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Heat Mining" 08304
+    CATEGORY        3
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Legged Robots" 05116
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Magma Refining" 08103
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Multiple Mine Projectile System" 07103
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Reduced Foam Evaporation" 08320
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Reinforced Panther Construction" 08309
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Rocket Propulsion" 05599
+    CATEGORY        7
+    COST            -1
+END_TECH 
+
+BEGIN_TECH  "Severe Atmospheric Disturbances" 05303
+    CATEGORY        10
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Acid Weaponry" 08503
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Advanced Armoring Systems" 10303
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Arachnid Weaponry" 07104
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Extended-Range Projectile Launcher" 07212
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "High-Powered Explosives" 08203
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Increased Capacitance Circuitry" 07403
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Magma Purity Control" 10301
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Space Program" 05405
+    CATEGORY        8
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Spider Maintenance Software Revision" 08319
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Arachnid Durability" 08321
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Artificial Lightning" 10102
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Efficiency Engineering" 08301
+    CATEGORY        2
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Efficiency Engineering" 08302
+    CATEGORY        2
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Extended-Range Projectile Launcher" 07211
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Grenade Loading Mechanism" 10306
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Improved Launch Vehicle" 10101
+    CATEGORY        8
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Meteor-Watch Observatory" 08049
+    CATEGORY        8
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Precision Trajectory Projection Software" 10309
+    CATEGORY        10
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Rocket Atmospheric Re-entry System" 12201
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Scorpion Power Systems" 07405
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Skydock" 08601
+    CATEGORY        8
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Solar Power" 10204
+    CATEGORY        3
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Stasis Systems" 10208
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Habitat Ring" 10205
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Grenade Loading Mechanism" 10305
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Heat Dissipation Systems" 12101
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "High-Energy Ray-Composite Projector" 08106
+    CATEGORY        10
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Ion Drive Module" 08801
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Command Module" 10202
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Meteor Detection" 08316
+    CATEGORY        10
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Orbital Package" 10209
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Sensor Package" 10206
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Fueling Systems" 08951
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Fusion Drive Module" 08901
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Phoenix Module" 10401
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Tiger Speed Modification" 11999
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+;******************************************************************************
+; Free Technologies
+;******************************************************************************
+
+BEGIN_TECH "Basic Lab" 02106
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Spider" 02099
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Agridome" 02101
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Command Center" 02103
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Structure Factory" 02104
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Light Tower" 02107
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Common Ore Mine" 02108
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Residence" 02109
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Common Ore Smelter" 02110
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Common Metals Storage Tanks" 02111
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Tokamak" 02112
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Tube" 02114
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Trade Center" 02115
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Standard Lab" 03101
+    CATEGORY        0
+    REQUIRES        02706
+    COST            0
+END_TECH
+
+BEGIN_TECH "Walls, Concrete" 05106
+    CATEGORY        0
+    COST            0
+END_TECH 
+
+BEGIN_TECH "Lab, Advanced" 05104
+    CATEGORY        0
+    REQUIRES        03305
+    COST            0
+END_TECH 
+
+BEGIN_TECH "Robot Command Center" 03501
+    CATEGORY        0
+    REQUIRES        03401
+    COST            0
+END_TECH
+
+BEGIN_TECH "Vehicle Factory" 03502
+    CATEGORY        0
+    REQUIRES        03401
+    COST            0
+END_TECH
+
+BEGIN_TECH "Scout" 03601
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Laser Turret" 03602
+    CATEGORY        0
+    REQUIRES        03407
+    EDEN_COST       0
+    PLYMOUTH_COST   -1
+END_TECH
+
+BEGIN_TECH "Microwave Turret" 03603
+    CATEGORY        0
+    REQUIRES        03408
+    EDEN_COST       -1
+    PLYMOUTH_COST   0
+END_TECH
+
+BEGIN_TECH "Cargo Truck" 03604
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Construction Vehicle" 03605
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Earthworks Constructor" 03606
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Evacuation Transport" 03607
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Robo-Dozer" 03608
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Robo-Miner" 03609
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Robo-Surveyor" 03610
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Guard Post" 03801
+    CATEGORY        0
+    REQUIRES        03407
+    REQUIRES        03408
+    COST            0
+END_TECH
+
+BEGIN_TECH "Garage" 05102
+    CATEGORY        0
+    REQUIRES        05052
+    COST            0
+END_TECH
+
+BEGIN_TECH "Repair vehicle" 05401
+    CATEGORY        0
+    REQUIRES        05102
+    EDEN_COST       0
+    PLYMOUTH_COST   -1
+END_TECH 
+
+BEGIN_TECH "Smelter, Rare Ore construction" 05501
+    CATEGORY        0
+    REQUIRES        05110
+    COST            0
+END_TECH 
+
+BEGIN_TECH "Storage Tanks, Rare Metals" 05502
+    CATEGORY        0
+    REQUIRES        05110
+    COST            0
+END_TECH 
+
+BEGIN_TECH "Observatory" 08051
+    CATEGORY        0
+    REQUIRES        08049
+    EDEN_COST       0
+    PLYMOUTH_COST   -1
+END_TECH
+
+BEGIN_TECH "SULV" 05503
+    CATEGORY        0
+    REQUIRES        05405
+    COST            0
+END_TECH
+
+BEGIN_TECH "EDWARD satellite" 05504
+    CATEGORY        0
+    REQUIRES        05405
+    COST            0
+END_TECH
+
+BEGIN_TECH "Meteor detection" 08317
+    CATEGORY        0
+    REQUIRES        08049
+    REQUIRES        08316
+    COST            0
+END_TECH
+
+BEGIN_TECH "Evacuation Module" 12599
+    CATEGORY        0
+    REQUIRES        10401
+    COST            0
+END_TECH
+
+;******************************************************************************
+; Unavailable Technologies
+;******************************************************************************
+BEGIN_TECH "NOT AVAILABLE" 02106
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "NOT AVAILABLE" 03607
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "NOT AVAILABLE" 08401
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "NOT AVAILABLE" 12499
+    CATEGORY        0
+    COST            -1
+END_TECH

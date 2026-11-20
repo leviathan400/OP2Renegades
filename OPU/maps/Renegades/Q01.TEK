@@ -1,0 +1,741 @@
+; Outpost 2: Divided Destiny
+; Research : Plymouth mission 1
+;
+;
+
+;******************************************************************************
+; Group I:  No predecessors
+;******************************************************************************
+
+BEGIN_TECH "Seismology" 03201
+    CATEGORY        10
+    DESCRIPTION     "Early warning of seismic events now available. _______________________________________  We have developed equipment to detect certain hydrogeochemical early warning signals of seismic events.  Among the most reliable indicators are variations in the concentration of radon and carbon dioxide in the molten salts found in deep bore wells or in fumaroles.  These warnings should give us some time to idle structures in the vicinity of the epicenter, reducing damage to them."
+    TEASER          "Gives early warning of seismic events. _______________________________________  Our previous research on the geology of New Terra indicated that the planet was not subject to seismic activity; recent events, however, have changed the situation.  Our planetary sciences database shows that seismologists had developed methods of seismic event prediction on Earth; some of these techniques may be adaptable to New Terra."
+    EDEN_COST       1800
+    PLYMOUTH_COST   1500
+    MAX_SCIENTISTS  11
+    LAB             2
+END_TECH 
+
+BEGIN_TECH "Focused Microwave Projection" 03408
+    CATEGORY        7
+    DESCRIPTION     "The Microwave weapon is now available.  Structure Factories may now produce Guard Post structure kits.  _______________________________________ We have refined the technology used in transmitting power between structures.  Our new emitters are capable of projecting a high-intensity beam of microwaves which will inflict heat damage on the target."
+    TEASER          "Makes the Microwave weapon available.  Allows production of Guard Post structure kits at the Structure Factory.  _______________________________________ Inter-colonial relations remain poor, making it prudent to develop some kind of defensive capability.  Our most promising research path lies in a refinement of the Microwave technology we use for transmitting power from our Tokamaks to the rest of the colony."
+    EDEN_COST       0
+    PLYMOUTH_COST   1200
+    MAX_SCIENTISTS  10
+    LAB             2
+END_TECH
+
+BEGIN_TECH "Cybernetic Teleoperation" 03401
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Emergency Response Systems" 03301
+    CATEGORY        11
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Environmental Psychology" 03406
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Health Maintenance" 03303
+    CATEGORY        11
+    COST            -1
+END_TECH
+
+BEGIN_TECH "High-Temperature Superconductivity" 03402
+    CATEGORY        3
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Hydroponic Growing Media" 03403
+    CATEGORY        5
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Large-Scale Optical Resonators" 03407
+    CATEGORY        7
+    COST            0
+END_TECH
+
+BEGIN_TECH "Metallogeny" 03405
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Metals Reclamation" 03302
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Offspring Enhancement" 03304
+    CATEGORY        11
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Research Training Programs" 03305
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Advanced Vehicle Power Plant" 03901
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Automated Diagnostic Examinations" 05307
+    CATEGORY        11
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Consumerism" 05101
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "DIRT Procedural Review" 05305
+    CATEGORY        11
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Disaster-Resistant Housing" 08105
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Expanded Housing" 08104
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Heat Dissipation Systems" 05601
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Hypnopaedia" 05309
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Hypnopaedia" 05310
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Leisure Studies" 03306
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Mobile Weapons Platform" 03851
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH  "Public Performance" 05108
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Rare Ore Processing" 05110
+    CATEGORY        6
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Recycler Postprocessing" 05306
+    CATEGORY        6
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Robot-Assist Mechanic" 05051
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Robot-Assist Mechanic" 05052
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Robotic Image Processing" 05318
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Vulcanology" 03202
+    CATEGORY        10
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Advanced Combat Chassis" 05201
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Advanced Robotic Manipulator Arm" 07213
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Advanced Robotic Manipulator Arm" 07214
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Dissipating Adhesives" 05202
+    CATEGORY        7
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Enhanced Defensive Fortifications" 08306
+    CATEGORY        2
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Explosive Charges" 07102
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Forum Reconfiguration" 05408
+    CATEGORY        9
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Geothermal Power" 05115
+    CATEGORY        3
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Hot-Cracking Column Efficiency" 07202
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Independent Turret Power Systems" 05111
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Lava Defenses" 05701
+    CATEGORY        2
+    COST            -1
+END_TECH
+
+BEGIN_TECH  "Magnetohydrodynamics" 05107
+    CATEGORY        3
+    COST            -1
+END_TECH 
+
+BEGIN_TECH  "Meteorology" 05302
+    CATEGORY        10
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Multitainment Console Upgrade" 08307
+    CATEGORY        9
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Rare Ore Extraction" 07201
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Reinforced Vehicle Construction" 05317
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Scout-class Drive Train Refit" 07206
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Smelter Postprocessing" 07203
+    CATEGORY        6
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Dual-Turret Weapons Systems" 08201
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Directional Magnetic Fields" 05506
+    CATEGORY        7
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Electromagnetic Pulsing" 05508
+    CATEGORY        7
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Heat Mining" 08304
+    CATEGORY        3
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Legged Robots" 05116
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Magma Refining" 08103
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Multiple Mine Projectile System" 07103
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Reduced Foam Evaporation" 08320
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Reinforced Panther Construction" 08309
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Rocket Propulsion" 05599
+    CATEGORY        7
+    COST            -1
+END_TECH 
+
+BEGIN_TECH  "Severe Atmospheric Disturbances" 05303
+    CATEGORY        10
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Acid Weaponry" 08503
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Advanced Armoring Systems" 10303
+    CATEGORY        4
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Arachnid Weaponry" 07104
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Extended-Range Projectile Launcher" 07212
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "High-Powered Explosives" 08203
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Increased Capacitance Circuitry" 07403
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Magma Purity Control" 10301
+    CATEGORY        6
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Space Program" 05405
+    CATEGORY        8
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "Spider Maintenance Software Revision" 08319
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Arachnid Durability" 08321
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Artificial Lightning" 10102
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Efficiency Engineering" 08301
+    CATEGORY        2
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Efficiency Engineering" 08302
+    CATEGORY        2
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Extended-Range Projectile Launcher" 07211
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Grenade Loading Mechanism" 10306
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Improved Launch Vehicle" 10101
+    CATEGORY        8
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Meteor-Watch Observatory" 08049
+    CATEGORY        8
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Precision Trajectory Projection Software" 10309
+    CATEGORY        10
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Rocket Atmospheric Re-entry System" 12201
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Scorpion Power Systems" 07405
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Skydock" 08601
+    CATEGORY        8
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Solar Power" 10204
+    CATEGORY        3
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Stasis Systems" 10208
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Habitat Ring" 10205
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Grenade Loading Mechanism" 10305
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Heat Dissipation Systems" 12101
+    CATEGORY        7
+    COST            -1
+END_TECH
+
+BEGIN_TECH "High-Energy Ray-Composite Projector" 08106
+    CATEGORY        10
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Ion Drive Module" 08801
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Command Module" 10202
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Meteor Detection" 08316
+    CATEGORY        10
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Orbital Package" 10209
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Sensor Package" 10206
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Fueling Systems" 08951
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Fusion Drive Module" 08901
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Phoenix Module" 10401
+    CATEGORY        12
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Tiger Speed Modification" 11999
+    CATEGORY        4
+    COST            -1
+END_TECH
+
+;******************************************************************************
+; Free Technologies
+;******************************************************************************
+
+BEGIN_TECH "Spider" 02099
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Agridome" 02101
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Command Center" 02103
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Structure Factory" 02104
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Light Tower" 02107
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Common Ore Mine" 02108
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Residence" 02109
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Common Ore Smelter" 02110
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Common Metals Storage Tanks" 02111
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Tokamak" 02112
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Tube" 02114
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Trade Center" 02115
+    CATEGORY        0
+    COST            0
+END_TECH
+
+; This mission does not use the standard lab
+BEGIN_TECH "Standard Lab" 03101
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "Walls, Concrete" 05106
+    CATEGORY        0
+    COST            0
+END_TECH 
+
+BEGIN_TECH "Lab, Advanced" 05104
+    CATEGORY        0
+    COST            -1
+END_TECH 
+
+BEGIN_TECH "03501 Robot Command Center" 03501
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "03502 Vehicle Factory" 03502
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "03601 Scout" 03601
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Laser Turret" 03602
+    CATEGORY        0
+    REQUIRES        03407
+    EDEN_COST       0
+    PLYMOUTH_COST   -1
+END_TECH
+
+BEGIN_TECH "Microwave Turret" 03603
+    CATEGORY        0
+    REQUIRES        03408
+    EDEN_COST       -1
+    PLYMOUTH_COST   0
+END_TECH
+
+BEGIN_TECH "Cargo Truck" 03604
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Construction Vehicle" 03605
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Earthworks Constructor" 03606
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Robo-Dozer" 03608
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Robo-Miner" 03609
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Robo-Surveyor" 03610
+    CATEGORY        0
+    REQUIRES        03502
+    COST            0
+END_TECH
+
+BEGIN_TECH "Guard Post" 03801
+    CATEGORY        0
+    REQUIRES        03407
+    REQUIRES        03408
+    COST            0
+END_TECH
+
+BEGIN_TECH "Garage" 05102
+    CATEGORY        0
+    REQUIRES        05051
+    REQUIRES        05052
+    COST            0
+END_TECH
+
+BEGIN_TECH "Repair vehicle" 05401
+    CATEGORY        0
+    REQUIRES        05102
+    EDEN_COST       0
+    PLYMOUTH_COST   -1
+END_TECH 
+
+BEGIN_TECH "Smelter, Rare Ore construction" 05501
+    CATEGORY        0
+    REQUIRES        05110
+    COST            0
+END_TECH 
+
+BEGIN_TECH "Storage Tanks, Rare Metals" 05502
+    CATEGORY        0
+    REQUIRES        05110
+    COST            0
+END_TECH 
+
+BEGIN_TECH "Rocket Launcher" 05602
+    CATEGORY        0
+    REQUIRES        05599
+    EDEN_COST       -1
+    PLYMOUTH_COST   0
+END_TECH
+
+BEGIN_TECH "Observatory" 08051
+    CATEGORY        0
+    REQUIRES        08049
+    EDEN_COST       0
+    PLYMOUTH_COST   -1
+END_TECH
+
+BEGIN_TECH "SULV" 05503
+    CATEGORY        0
+    REQUIRES        05405
+    COST            0
+END_TECH
+
+BEGIN_TECH "EDWARD satellite" 05504
+    CATEGORY        0
+    COST            0
+END_TECH
+
+BEGIN_TECH "Meteor detection" 08317
+    CATEGORY        0
+    REQUIRES        08049
+    REQUIRES        08316
+    COST            0
+END_TECH
+
+BEGIN_TECH "Evacuation Module" 12599
+    CATEGORY        0
+    REQUIRES        10401
+    COST            0
+END_TECH
+
+;******************************************************************************
+; Unavailable Technologies
+;******************************************************************************
+BEGIN_TECH "NOT AVAILABLE" 02106
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "NOT AVAILABLE" 03607
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "NOT AVAILABLE" 08401
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+BEGIN_TECH "NOT AVAILABLE" 12499
+    CATEGORY        0
+    COST            -1
+END_TECH
+
+
+; Garbage so checksum matches original:=v…F
