@@ -44,7 +44,8 @@ listed change in the mission's script. Several are open questions for players: s
 
 ## The loader and the look
 
-- **Background graphics.** New backgrounds for the loader's main menu and start-campaign form, and for the website.
+- **Background graphics.** More backgrounds: the loader's main menu has a new one since 1.2.10; the start-campaign
+  form and the website still have the original's.
 - **The logo.** A remake of the Renegades logo (the loader's splash, the website).
 - **The icon.** A remake of the loader's icon, with the sizes Windows uses (16 to 256 pixels; the original is one
   32 x 32 image).
@@ -62,10 +63,10 @@ listed change in the mission's script. Several are open questions for players: s
 
 ## Translations
 
-The loader speaks English, German, Spanish and Portuguese (`OPU/renegades/lang.<code>.ini`).
+The loader speaks English, German, Spanish, French and Portuguese (`OPU/renegades/lang.<code>.ini`).
 
-- **A native speaker's reading** of the German, Spanish and Portuguese texts.
-- **More languages.** Copy `lang.en.ini` to `lang.<code>.ini` (`fr`, `pl`, `ru`, ...) and translate the quoted texts.
+- **A native speaker's reading** of the German, Spanish, French and Portuguese texts.
+- **More languages.** Copy `lang.en.ini` to `lang.<code>.ini` (`pl`, `ru`, ...) and translate the quoted texts.
 
 Renegades' own briefings, objectives and story are in English only.
 

@@ -1,18 +1,35 @@
 # Changelog
 
-## 1.2.9 (not released yet)
+## 1.2.10 (2026-11-21)
+
+Everything since 1.2.8. (1.2.9 went to testing only and was never published.)
 
 ### The loader
 
+- **A new background.** The loader opens in a larger window (1448 x 1086) with a new picture behind the menu,
+  `OPU\renegades\background02.png`. For the original look, Renegades' own picture in a 1024 x 768 window, set
+  `ClassicBackground=1` in `OPU\renegades\Renegades.ini`.
+- **Fits smaller screens.** On a screen too small for the window (less the taskbar), the window and its background
+  shrink to fit, keeping their shape; the menus and texts stay their size.
 - **Checks that OPU 1.4.1 is installed.** Renegades needs Outpost 2 with the Outpost Universe update; unzipped into
   an Outpost 2 folder without it, the game stayed at its menu and no mission ever loaded. Now the loader says OPU
   1.4.1 is needed, opens the Outpost 2 page at https://outpost2.net/outpost2.html to download it once you press
   OK, and closes.
 - **French.** The loader's texts are also in French (`OPU\renegades\lang.fr.ini`, `Lang=fr`).
+- **Briefings and objectives look as in the original.** The Briefing form has the briefing on the left and the
+  mission's picture on the right, with Renegades' blueprint behind; Objectives and the story chapters show their
+  text across the form. The texts are in the colours and sizes their files give (the objectives in blue, as in the
+  original). The mission menu has the blueprint behind its buttons too.
+- **A larger Start Campaign form,** so more of the prologue shows at once.
+- **Keys on the main menu:** R (Outpost Renegades), C (Colony Games), P (Preferences), H (Help), A (About) and Q
+  (Quit), on their own, in every language.
 
 ### The missions
 
-- Each mission starts with "Renegades v1.2.9" in the message log.
+- **OP2Lua 0.8.6.** The missions run on OP2Lua 0.8.6 (`OPU\OP2LuaCore.dll`; 1.2.8 had 0.8.3). Its fixes since 0.8.3
+  include colony morale and orders to a unit given the tick it was made. Tried headless on all four missions at each
+  difficulty: no script errors, and each ends as on 0.8.3; the computer player's moves drift a little later in a game.
+- Each mission starts with "Renegades v1.2.10" in the message log.
 
 ## 1.2.8 (2026-11-20)
 

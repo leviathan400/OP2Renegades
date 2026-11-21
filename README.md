@@ -10,17 +10,18 @@ Outpost 2 with the Outpost Universe update (OPU 1.4.1).
 
 ## What's here
 
-Release 1.2.8, file for file as its zip installs it (the zip's SHA-256 and every file's are in
-[docs/FILES-1.2.8.md](docs/FILES-1.2.8.md); what changed since 1.2.0 is in [CHANGELOG.md](CHANGELOG.md), and 1.2.0's files and
-hashes in [docs/FILES-1.2.0.md](docs/FILES-1.2.0.md)):
+Release 1.2.10, file for file as its zip installs it (the zip's SHA-256 and every file's are in
+[docs/FILES-1.2.10.md](docs/FILES-1.2.10.md); what changed in each release is in [CHANGELOG.md](CHANGELOG.md), and the
+earlier releases' files and hashes in [docs/FILES-1.2.8.md](docs/FILES-1.2.8.md) and
+[docs/FILES-1.2.0.md](docs/FILES-1.2.0.md)):
 
 | Files | What |
 |---|---|
 | `OPU/Renegades.exe` | The Renegades loader: the campaign's menus in Renegades' own look. It starts each mission and follows the game. |
 | `OPU/Renegades.dll`, `OPU/ren2res.dll` | The module that gives a Renegades game its own look (the "OP: RENEGADES" title, the R in the command pane), and Renegades' in-game art it uses. |
-| `OPU/OP2LuaCore.dll` | The [OP2Lua](https://github.com/leviathan400/OP2Lua) runtime (0.8.3) the missions need. |
+| `OPU/OP2LuaCore.dll` | The [OP2Lua](https://github.com/leviathan400/OP2Lua) runtime (0.8.6) the missions need. |
 | `OPU/op2launcher.exe`, `OPU/Launcher.dll` | Start a mission straight from the loader. |
-| `OPU/renegades/` | Renegades' menu art and texts (`renshres.dll`, `ren.vol`), the R (`renegmbl.raw`), the loader's texts in English, German, Spanish and Portuguese (`lang.en.ini`, `lang.de.ini`, `lang.es.ini`, `lang.pt.ini`) and the install notes with the credits (`README.txt`). |
+| `OPU/renegades/` | Renegades' menu art and texts (`renshres.dll`, `ren.vol`), the R (`renegmbl.raw`), the loader's background (`background02.png`), its texts in English, German, Spanish, French and Portuguese (`lang.en.ini`, `lang.de.ini`, `lang.es.ini`, `lang.fr.ini`, `lang.pt.ini`) and the install notes with the credits (`README.txt`). |
 | `OPU/maps/Renegades/q01Lua` ... `q04Lua` (`.dll`, `.lua`, `.placement.lua`) | The four missions: Relocation, Onslaught, Consequences and Raid. Each `.dll` is OP2Lua's mission DLL, the `.lua` its script (objectives, events, the computer player's AI) and the `.placement.lua` the units and structures it places at the start. |
 | `OPU/maps/Renegades/Q01.MAP` ... `Q04.MAP`, `Q01.TEK` ... `Q03.TEK` | Renegades' own maps and tech trees, from the original campaign. |
 | `OPU/maps/Renegades/ren228.wav` ... `ren234.wav` | Renegades' voice lines, played by the missions. |
@@ -44,9 +45,12 @@ starts. The loader shows Renegades' own menus, prologue, briefings, objectives a
 the difficulty you picked, follows the game, records the result and moves the campaign on after a win; each mission
 after the first starts from what you won the one before with. `Renegades.exe /select` picks any one mission.
 
-The loader speaks English, German, Spanish and Portuguese: your Windows language on the first start if it has it,
+The loader speaks English, German, Spanish, French and Portuguese: your Windows language on the first start if it has it,
 else English; change it in its Preferences. To translate it, copy `OPU\renegades\lang.en.ini` to
 `lang.<code>.ini` and translate the quoted texts.
+
+The loader opens with its new background, sized to fit your screen. For the original look, Renegades' own picture in
+a smaller window, set `ClassicBackground=1` in `OPU\renegades\Renegades.ini`.
 
 To update, unzip the new release over the old one.
 

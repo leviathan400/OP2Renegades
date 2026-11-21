@@ -1,4 +1,4 @@
--- q01Lua.lua  -  Outpost : Renegades - Relocation (Lua) v1.2.8
+-- q01Lua.lua  -  Outpost : Renegades - Relocation (Lua) v1.2.10
 -- Converted from q01.dll. With q01Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, Eden's AI and the mission's events (below the converted part) are written by hand.
@@ -6,7 +6,7 @@
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
 
 -- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
-local VERSION = "1.2.8"
+local VERSION = "1.2.10"
 
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.

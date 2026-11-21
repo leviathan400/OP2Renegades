@@ -31,15 +31,17 @@ start), so your place in the campaign, its difficulty and your folders are kept.
 
 What goes where:
   OPU\Renegades.exe           the loader, beside OPULauncher.exe
-  OPU\renegades\              Renegades' menu art and texts (renshres.dll, ren.vol), the R (renegmbl.raw), and the
-                              loader's settings and history, and its texts in English, German, Spanish and
-                              Portuguese (lang.en.ini, lang.de.ini, lang.es.ini, lang.pt.ini): the first start
-                              picks Windows' language if there's a file for it; change it in Preferences, or
-                              Lang=en / de / es / pt in Renegades.ini. To translate the loader, copy lang.en.ini
-                              to lang.<code>.ini.
+  OPU\renegades\              Renegades' menu art and texts (renshres.dll, ren.vol), the R (renegmbl.raw), the
+                              loader's background (background02.png; ClassicBackground=1 in Renegades.ini shows the
+                              original's picture in a smaller window instead), and the
+                              loader's settings and history, and its texts in English, German, Spanish, French
+                              and Portuguese (lang.en.ini, lang.de.ini, lang.es.ini, lang.fr.ini, lang.pt.ini):
+                              the first start picks Windows' language if there's a file for it; change it in
+                              Preferences, or Lang=en / de / es / fr / pt in Renegades.ini. To translate the
+                              loader, copy lang.en.ini to lang.<code>.ini.
   OPU\Renegades.dll           the in-game look: the "OP: RENEGADES" title, the R in the command pane
   OPU\ren2res.dll             Renegades' in-game art, used by Renegades.dll
-  OPU\OP2LuaCore.dll          OP2Lua 0.8.3 (the missions need it; it replaces an older one)
+  OPU\OP2LuaCore.dll          OP2Lua 0.8.6 (the missions need it; it replaces an older one)
   OPU\op2launcher.exe, Launcher.dll   start a mission straight from the loader
   OPU\maps\Renegades\         the four missions, their maps and Renegades' voice lines
   OPU\logs\                   where OP2Lua writes the missions' logs
