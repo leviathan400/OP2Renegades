@@ -24,6 +24,7 @@ hashes in [docs/FILES-1.2.0.md](docs/FILES-1.2.0.md)):
 | `OPU/maps/Renegades/q01Lua` ... `q04Lua` (`.dll`, `.lua`, `.placement.lua`) | The four missions: Relocation, Onslaught, Consequences and Raid. Each `.dll` is OP2Lua's mission DLL, the `.lua` its script (objectives, events, the computer player's AI) and the `.placement.lua` the units and structures it places at the start. |
 | `OPU/maps/Renegades/Q01.MAP` ... `Q04.MAP`, `Q01.TEK` ... `Q03.TEK` | Renegades' own maps and tech trees, from the original campaign. |
 | `OPU/maps/Renegades/ren228.wav` ... `ren234.wav` | Renegades' voice lines, played by the missions. |
+| `module/` | Not in the zip: the source of `Renegades.dll` and how to build it ([module/README.md](module/README.md)). |
 
 The release has no `outpost2.ini`, so the game's own settings stay as they are, and no `Renegades.ini`: the loader
 writes its settings on its first start, so unzipping a newer release over an older one keeps your campaign. The

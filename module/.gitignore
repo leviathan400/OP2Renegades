@@ -1,0 +1,6 @@
+# Build output (build.bat): the release ships Renegades.dll and ren2res.dll in OPU\
+*.dll
+*.obj
+*.exp
+*.lib
+*.res
