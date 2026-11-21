@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.9 (not released yet)
+
+### The loader
+
+- **Checks that OPU 1.4.1 is installed.** Renegades needs Outpost 2 with the Outpost Universe update; unzipped into
+  an Outpost 2 folder without it, the game stayed at its menu and no mission ever loaded. Now the loader says OPU
+  1.4.1 is needed, opens the Outpost 2 page at https://outpost2.net/outpost2.html to download it once you press
+  OK, and closes.
+- **French.** The loader's texts are also in French (`OPU\renegades\lang.fr.ini`, `Lang=fr`).
+
+### The missions
+
+- Each mission starts with "Renegades v1.2.9" in the message log.
+
 ## 1.2.8 (2026-11-20)
 
 Everything since 1.2.0 (2026-11-19), the first release.
