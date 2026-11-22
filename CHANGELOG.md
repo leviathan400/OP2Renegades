@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.2.11 (2026-11-22)
+
+Fixes from the first play tests.
+
+### The loader
+
+- **A won mission always counts.** After a win the loader could say "The mission was not finished" and the campaign
+  didn't move on (it happened after Onslaught's evacuation). Outpost 2 shows the win only for a moment as it leaves
+  the mission; the loader now also takes the mission's own record of it.
+- **A new background,** `OPU\renegades\background03.png`. 1.2.10's `background02.png` is no longer used and can be
+  deleted.
+
+### The missions
+
+- **Onslaught keeps the kits you stored.** The kits in the Structure Factory you bring from Relocation were replaced
+  by Onslaught's own (Guard Post kits, and on Easy a Residence and an Agridome), so a Smelter or Structure Factory kit
+  you had packed was gone. Now the factory comes through as you left it.
+- **Cleaner carry-over files.** Each vehicle saves only what it really carries (a ConVec's kit, a truck's cargo, a
+  tank's weapon); a ConVec no longer saves its kit a second time as a weapon.
+- **Raid records its win** in a small `q04.carry`, so the loader sees the end of the campaign.
+- Each mission starts with "Renegades v1.2.11" in the message log. The missions still run on OP2Lua 0.8.6.
+
 ## 1.2.10 (2026-11-21)
 
 Everything since 1.2.8. (1.2.9 went to testing only and was never published.)

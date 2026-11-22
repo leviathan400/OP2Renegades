@@ -10,9 +10,9 @@ Outpost 2 with the Outpost Universe update (OPU 1.4.1).
 
 ## What's here
 
-Release 1.2.10, file for file as its zip installs it (the zip's SHA-256 and every file's are in
-[docs/FILES-1.2.10.md](docs/FILES-1.2.10.md); what changed in each release is in [CHANGELOG.md](CHANGELOG.md), and the
-earlier releases' files and hashes in [docs/FILES-1.2.8.md](docs/FILES-1.2.8.md) and
+Release 1.2.11, file for file as its zip installs it (the zip's SHA-256 and every file's are in
+[docs/FILES-1.2.11.md](docs/FILES-1.2.11.md); what changed in each release is in [CHANGELOG.md](CHANGELOG.md), and the
+earlier releases' files and hashes in [docs/FILES-1.2.10.md](docs/FILES-1.2.10.md), [docs/FILES-1.2.8.md](docs/FILES-1.2.8.md) and
 [docs/FILES-1.2.0.md](docs/FILES-1.2.0.md)):
 
 | Files | What |
@@ -21,7 +21,7 @@ earlier releases' files and hashes in [docs/FILES-1.2.8.md](docs/FILES-1.2.8.md)
 | `OPU/Renegades.dll`, `OPU/ren2res.dll` | The module that gives a Renegades game its own look (the "OP: RENEGADES" title, the R in the command pane), and Renegades' in-game art it uses. |
 | `OPU/OP2LuaCore.dll` | The [OP2Lua](https://github.com/leviathan400/OP2Lua) runtime (0.8.6) the missions need. |
 | `OPU/op2launcher.exe`, `OPU/Launcher.dll` | Start a mission straight from the loader. |
-| `OPU/renegades/` | Renegades' menu art and texts (`renshres.dll`, `ren.vol`), the R (`renegmbl.raw`), the loader's background (`background02.png`), its texts in English, German, Spanish, French and Portuguese (`lang.en.ini`, `lang.de.ini`, `lang.es.ini`, `lang.fr.ini`, `lang.pt.ini`) and the install notes with the credits (`README.txt`). |
+| `OPU/renegades/` | Renegades' menu art and texts (`renshres.dll`, `ren.vol`), the R (`renegmbl.raw`), the loader's background (`background03.png`), its texts in English, German, Spanish, French and Portuguese (`lang.en.ini`, `lang.de.ini`, `lang.es.ini`, `lang.fr.ini`, `lang.pt.ini`) and the install notes with the credits (`README.txt`). |
 | `OPU/maps/Renegades/q01Lua` ... `q04Lua` (`.dll`, `.lua`, `.placement.lua`) | The four missions: Relocation, Onslaught, Consequences and Raid. Each `.dll` is OP2Lua's mission DLL, the `.lua` its script (objectives, events, the computer player's AI) and the `.placement.lua` the units and structures it places at the start. |
 | `OPU/maps/Renegades/Q01.MAP` ... `Q04.MAP`, `Q01.TEK` ... `Q03.TEK` | Renegades' own maps and tech trees, from the original campaign. |
 | `OPU/maps/Renegades/ren228.wav` ... `ren234.wav` | Renegades' voice lines, played by the missions. |

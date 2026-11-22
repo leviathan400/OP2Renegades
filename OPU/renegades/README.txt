@@ -32,7 +32,7 @@ start), so your place in the campaign, its difficulty and your folders are kept.
 What goes where:
   OPU\Renegades.exe           the loader, beside OPULauncher.exe
   OPU\renegades\              Renegades' menu art and texts (renshres.dll, ren.vol), the R (renegmbl.raw), the
-                              loader's background (background02.png; ClassicBackground=1 in Renegades.ini shows the
+                              loader's background (background03.png; ClassicBackground=1 in Renegades.ini shows the
                               original's picture in a smaller window instead), and the
                               loader's settings and history, and its texts in English, German, Spanish, French
                               and Portuguese (lang.en.ini, lang.de.ini, lang.es.ini, lang.fr.ini, lang.pt.ini):

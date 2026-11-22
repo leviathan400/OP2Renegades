@@ -1,4 +1,4 @@
--- q04Lua.lua  -  Outpost : Renegades - Raid (Lua) v1.2.10
+-- q04Lua.lua  -  Outpost : Renegades - Raid (Lua) v1.2.11
 -- Converted from q04.dll. With q04Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, the computer players' AI and the mission's events (below the converted part) are written by hand.
@@ -6,7 +6,44 @@
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
 
 -- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
-local VERSION = "1.2.10"
+local VERSION = "1.2.11"
+
+-- The win, for the Renegades loader: a game started by op2launcher never tells the script it ended, and Outpost 2
+-- sets its end reason only as it leaves the mission, which the loader can miss. So once every victory condition
+-- still standing has fired (the game then ends as won; Raid makes some of them as it goes) q04.carry is written,
+-- as q01-q03 write theirs, holding only the win: the loader takes a q0N.carry written since the launch as won.
+-- Again in on_end when the game reports a win. The loader deletes it when a new campaign starts.
+local carry_wins = {}
+do
+  local victory = mission.victory
+  mission.victory = function(...)
+    local t = victory(...)
+    carry_wins[#carry_wins + 1] = t
+    return t
+  end
+end
+
+-- Every victory condition still standing has fired for the human player.
+local function carry_won()
+  local any = false
+  for _, t in ipairs(carry_wins) do
+    if t.valid then
+      if not t:has_fired(players[1]) then return false end
+      any = true
+    end
+  end
+  return any
+end
+
+local function save_win(why)
+  if not campaign then print("This OP2LuaCore has no campaign store: no q04.carry written") return end
+  local ok, err = campaign.save("q04", { won = true, mission = "q04" })
+  print(("Win marker q04.carry (%s): %s%s"):format(why, ok and "saved" or "not saved", err and (": " .. err) or ""))
+end
+
+function on_end(result)
+  if result and result.result == "won" then save_win("the game reports the win") end
+end
 
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.
@@ -1117,6 +1154,7 @@ local function objectives()
   game.create_marker(P(ENTRY[1], ENTRY[2]), "Circle")
   keep.evac = make("EvacuationTransport", HUMAN, P(0x47, 0x7D), 6)              -- 0x11017014
   keep.evac:set_lights(true)
+  condition_event(true, carry_won, function() save_win("all the victory conditions met") end)
 end
 
 -- InitProc's part after the carry-over (0x11004475), in its order.

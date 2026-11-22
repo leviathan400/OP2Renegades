@@ -1,4 +1,4 @@
--- q01Lua.lua  -  Outpost : Renegades - Relocation (Lua) v1.2.10
+-- q01Lua.lua  -  Outpost : Renegades - Relocation (Lua) v1.2.11
 -- Converted from q01.dll. With q01Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, Eden's AI and the mission's events (below the converted part) are written by hand.
@@ -6,7 +6,7 @@
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
 
 -- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
-local VERSION = "1.2.10"
+local VERSION = "1.2.11"
 
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.
@@ -525,8 +525,9 @@ end
 -- campaign store as q0N.carry beside this DLL. Status-bar tiles, Lua's 1-based players, the API's names:
 -- - cells: { x, y, cell type, tile }, for each cell whose type is above 0xF (the tile for dozed and rubble only);
 -- - colony: the human player's difficulty (0-2), food, kids, ore, rare ore, scientists and workers (no RLV count);
--- - units: every player's, the highest first, structures then vehicles: type, player, x, y, weapon, a ConVec's kit,
---   a truck's cargo and amount, and a Structure Factory's or Spaceport's six bays ({ kit, weapon or cargo }).
+-- - units: every player's, the highest first, structures then vehicles: type, player, x, y, a ConVec's kit and its
+--   weapon (a Guard Post kit's turret), a truck's cargo and amount, any other unit's weapon, and a Structure
+--   Factory's or Spaceport's six bays ({ kit, weapon or cargo }).
 -- A game started by op2launcher never tells the script it ended, so it's written once every victory condition
 -- still standing has fired (the game then ends as won), and again in on_end when the game reports a win.
 -- ---------------------------------------------------------------------------------------------------------------
@@ -570,9 +571,18 @@ local function carry_over(mission_name, difficulty)
   local function named(v) return v and v ~= "None" and v ~= "" and v ~= "Empty" and v or nil end
   local units = {}
   local function add(id, u)
+    -- The kit, a truck's cargo and a weapon share one slot in the game, so each is read only on the unit it belongs
+    -- to: on a ConVec unit.weapon reads the kit again, and unit.cargo reads other bytes.
+    local convec, truck = u.type == "ConVec", u.type == "CargoTruck"
     local r = { type = u.type, player = id, x = u.x, y = u.y, vehicle = u.is_vehicle or nil,
-                weapon = named(u.weapon), kit = u.type == "ConVec" and named(u.kit) or nil }
-    if named(u.cargo) then r.cargo, r.amount = u.cargo, u.cargo_amount end
+                weapon = not convec and not truck and named(u.weapon) or nil, kit = convec and named(u.kit) or nil }
+    -- A ConVec's weapon is its kit's own (a Guard Post kit's turret), which the readers give set_kit back: OP2Lua's
+    -- unit.kit_weapon; a core without it saves none (the turret is then lost, as before).
+    if r.kit then
+      local ok, w = pcall(function() return u.kit_weapon end)
+      r.weapon = ok and named(w) or nil
+    end
+    if truck and named(u.cargo) then r.cargo, r.amount = u.cargo, u.cargo_amount end
     if u.type == "StructureFactory" or u.type == "Spaceport" then
       r.bays = {}
       for bay = 1, 6 do

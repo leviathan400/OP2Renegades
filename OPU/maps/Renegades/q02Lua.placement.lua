@@ -1,4 +1,4 @@
--- q02Lua.placement.lua  -  Outpost : Renegades - Onslaught (Lua) v1.2.10
+-- q02Lua.placement.lua  -  Outpost : Renegades - Onslaught (Lua) v1.2.11
 -- Converted from q02.dll: what its setup makes at every difficulty. What changes with the
 -- difficulty (more units on Easy, colonists, stores, research) and the beacons it rolls are in q02Lua.lua.
 -- Coordinates are the in-game status-bar ones (map file tile + 1).

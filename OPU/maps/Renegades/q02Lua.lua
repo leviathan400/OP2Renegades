@@ -1,4 +1,4 @@
--- q02Lua.lua  -  Outpost : Renegades - Onslaught (Lua) v1.2.10
+-- q02Lua.lua  -  Outpost : Renegades - Onslaught (Lua) v1.2.11
 -- Converted from q02.dll. With q02Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, the computer players' AI and the mission's events (below the converted part) are written by hand.
@@ -6,7 +6,7 @@
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
 
 -- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
-local VERSION = "1.2.10"
+local VERSION = "1.2.11"
 
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.
@@ -353,6 +353,9 @@ local LAVA_POSSIBLE = {
 }
 
 local kits_set = false
+-- Player 1's Structure Factory came from q01.carry with its own bays (carry_point): the stand-in's kits, baked in from
+-- the harness's q01 for a start without a file, are not put in it. The original's setup never fills player 1's bays.
+local factory_carried = false
 local function make_unit(player, u, at, kits, exact)
   local made = game.create_unit{ type = u.type, player = player, at = at, direction = u.direction,
                                  weapon = u.weapon, lights = u.lights, exact = exact }
@@ -387,7 +390,7 @@ function make_player(player, p)
   -- The original asks for every unit of a kit on one tile; the game finds each a place nearby.
   for _, u in ipairs(p.kit or {}) do make_unit(player, u, place(u.at), p.kits, false) end
   -- A Structure Factory alike at every difficulty is the placement's; its bays are the difficulty's (Eden 1).
-  if p.kits and not kits_set then
+  if p.kits and not kits_set and not factory_carried then
     local f = player:buildings("StructureFactory")[1]
     if f then
       for bay, kit in pairs(p.kits) do f:set_factory_cargo(bay, kit[1], kit[2]) end
@@ -600,6 +603,7 @@ end
 function carry_point()
   if carry.data then
     carry.difficulty = build_carry_over(carry.data)
+    factory_carried = true
     return true
   end
   for _, t in ipairs(STANDIN_TUBES) do game.create_tube(t) end
@@ -613,8 +617,9 @@ end
 -- campaign store as q0N.carry beside this DLL. Status-bar tiles, Lua's 1-based players, the API's names:
 -- - cells: { x, y, cell type, tile }, for each cell whose type is above 0xF (the tile for dozed and rubble only);
 -- - colony: the human player's difficulty (0-2), food, kids, ore, rare ore, scientists and workers (no RLV count);
--- - units: every player's, the highest first, structures then vehicles: type, player, x, y, weapon, a ConVec's kit,
---   a truck's cargo and amount, and a Structure Factory's or Spaceport's six bays ({ kit, weapon or cargo }).
+-- - units: every player's, the highest first, structures then vehicles: type, player, x, y, a ConVec's kit and its
+--   weapon (a Guard Post kit's turret), a truck's cargo and amount, any other unit's weapon, and a Structure
+--   Factory's or Spaceport's six bays ({ kit, weapon or cargo }).
 -- A game started by op2launcher never tells the script it ended, so it's written once every victory condition
 -- still standing has fired (the game then ends as won), and again in on_end when the game reports a win.
 -- ---------------------------------------------------------------------------------------------------------------
@@ -658,9 +663,18 @@ local function carry_over(mission_name, difficulty)
   local function named(v) return v and v ~= "None" and v ~= "" and v ~= "Empty" and v or nil end
   local units = {}
   local function add(id, u)
+    -- The kit, a truck's cargo and a weapon share one slot in the game, so each is read only on the unit it belongs
+    -- to: on a ConVec unit.weapon reads the kit again, and unit.cargo reads other bytes.
+    local convec, truck = u.type == "ConVec", u.type == "CargoTruck"
     local r = { type = u.type, player = id, x = u.x, y = u.y, vehicle = u.is_vehicle or nil,
-                weapon = named(u.weapon), kit = u.type == "ConVec" and named(u.kit) or nil }
-    if named(u.cargo) then r.cargo, r.amount = u.cargo, u.cargo_amount end
+                weapon = not convec and not truck and named(u.weapon) or nil, kit = convec and named(u.kit) or nil }
+    -- A ConVec's weapon is its kit's own (a Guard Post kit's turret), which the readers give set_kit back: OP2Lua's
+    -- unit.kit_weapon; a core without it saves none (the turret is then lost, as before).
+    if r.kit then
+      local ok, w = pcall(function() return u.kit_weapon end)
+      r.weapon = ok and named(w) or nil
+    end
+    if truck and named(u.cargo) then r.cargo, r.amount = u.cargo, u.cargo_amount end
     if u.type == "StructureFactory" or u.type == "Spaceport" then
       r.bays = {}
       for bay = 1, 6 do
