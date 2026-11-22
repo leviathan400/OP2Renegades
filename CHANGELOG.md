@@ -17,10 +17,13 @@ Fixes from the first play tests.
 - **Onslaught keeps the kits you stored.** The kits in the Structure Factory you bring from Relocation were replaced
   by Onslaught's own (Guard Post kits, and on Easy a Residence and an Agridome), so a Smelter or Structure Factory kit
   you had packed was gone. Now the factory comes through as you left it.
-- **Cleaner carry-over files.** Each vehicle saves only what it really carries (a ConVec's kit, a truck's cargo, a
-  tank's weapon); a ConVec no longer saves its kit a second time as a weapon.
+- **Guard Post kits keep their turret.** A ConVec carrying a Guard Post kit into the next mission lost the kit's
+  turret. Each vehicle in the carry-over now saves only what it really carries (a ConVec's kit and its turret, a
+  truck's cargo, a tank's weapon).
 - **Raid records its win** in a small `q04.carry`, so the loader sees the end of the campaign.
-- Each mission starts with "Renegades v1.2.11" in the message log. The missions still run on OP2Lua 0.8.6.
+- **OP2Lua 0.8.7** (`OPU\OP2LuaCore.dll`; 1.2.10 had 0.8.6): it reads a ConVec kit's turret, and drops a runaway
+  script call instead of freezing the game.
+- Each mission starts with "Renegades v1.2.11" in the message log.
 
 ## 1.2.10 (2026-11-21)
 

@@ -5,15 +5,15 @@ against the release.
 
 | Zip | Size | SHA-256 |
 |---|---:|---|
-| `Outpost2-Renegades-1.2.11.zip` | 12,660,082 | `c53f7df601735efec2a7a2ac7d02f1148a2f28c3d56472e8254db8e23feb9e70` |
+| `Outpost2-Renegades-1.2.11.zip` | 12,665,622 | `e999cb1da5f148505d443868626644243faa9bb151802ef1fa5c009078f4af16` |
 
-The zip holds 43 files (28,037,183 bytes) and one empty folder, `OPU/logs/`, where OP2Lua writes the missions'
+The zip holds 43 files (28,053,055 bytes) and one empty folder, `OPU/logs/`, where OP2Lua writes the missions'
 logs. It unzips into the Outpost 2 folder. It has **no `outpost2.ini`** and **no `Renegades.ini`**: the game's own
 settings file is left as it is, and the loader writes its `Renegades.ini` on its first start, so unzipping it over
 an older release keeps the campaign. The loader adds its lines to `OPU\outpost2.ini` when it runs (the module's
 registration, and before each mission IntroAVI=0, CheckForUpdates=0 and ShowUnitHPBars=0).
 
-`Renegades.exe` and `Renegades.dll` carry version 1.2.11.0; `OP2LuaCore.dll` is OP2Lua 0.8.6. Compared with 1.2.10,
+`Renegades.exe` and `Renegades.dll` carry version 1.2.11.0; `OP2LuaCore.dll` is OP2Lua 0.8.7. Compared with 1.2.10,
 `OPU/renegades/background03.png` (the loader's background) replaces `background02.png`.
 `.gitattributes` keeps Git from changing any file's line endings, so a copy from this repository hashes the same.
 
@@ -23,7 +23,7 @@ registration, and before each mission IntroAVI=0, CheckForUpdates=0 and ShowUnit
 |---|---:|---|
 | `Launcher.dll` | 164,352 | `d001edd31cd6c72e8779c7fe9b6fe3a9788c2a7dc068dbeabd5d256bb6b65eb7` |
 | `op2launcher.exe` | 144,384 | `c235cbcd60efe8b35f7ea434c62e878de987fa9d958521076e1eef6048ebb416` |
-| `OP2LuaCore.dll` | 3,051,520 | `df1f3bedcaedc3c76670b96631e04ccd8fd8a2e3be6f1510e9552d7bc53068c1` |
+| `OP2LuaCore.dll` | 3,067,392 | `e004cb4d44bca734a55e3f53ba9911b52b164c976eba3d6d6032f3ad271b02ac` |
 | `ren2res.dll` | 526,848 | `9cc5c63a9867ec97659b1ba4fb5ebd9e758fc71d61fdf15e2a7c1729054bc2ba` |
 | `Renegades.dll` | 152,064 | `1369462f35de06420e4487c058bd72a2fb10b739c33308eeaebb5bbd5f246f1e` |
 | `Renegades.exe` | 16,993,792 | `4e5215ed69fb3434e6969a12193912d8bdae2b9a9d6c312835673460a6eb8826` |
@@ -38,7 +38,7 @@ registration, and before each mission IntroAVI=0, CheckForUpdates=0 and ShowUnit
 | `lang.es.ini` | 5,474 | `1dec539e1f29d3a1d74a11af81a990d0d9843579aef30301961d74e48c3156b0` |
 | `lang.fr.ini` | 5,737 | `f4fa306b5ed50cd9cea529d6c608a3ae38c2bb2e323f0949c685b07559c1a129` |
 | `lang.pt.ini` | 5,471 | `6ce07b482b9c8d8f9bcfa4b350457e69e464825c10d3df9447af293f8f9ae774` |
-| `README.txt` | 3,900 | `10d51dd1c285ff102e2c3b088f7ed5db623f80308af13636555028a30ba06747` |
+| `README.txt` | 3,900 | `2e99486b8a7ec08c876e5e8d27e4f3fe8a48f6d2503fdfe76be1e403751cf256` |
 | `ren.vol` | 68,974 | `78f48d149a536b003adce4093f9c3826ff063d4dbe131403833a7d2bd4769068` |
 | `renegmbl.raw` | 29,484 | `0be5fd7015c85e80e15271e6649083bef33782302586cf260f228a9e7c90f2ee` |
 | `renshres.dll` | 3,080,192 | `05834c8be1d6d9af02102de4a482bcf55d022eed6757c84dad5e19fae7dcd01b` |
