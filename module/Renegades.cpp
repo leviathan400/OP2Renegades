@@ -1,10 +1,14 @@
 // Renegades.cpp - Renegades.dll, an op2ext ".ini module" giving a Renegades game its in-game look, in memory only:
 //   - the in-game art from ren2res.dll instead of out2res.dll (the "OP: RENEGADES" title, the blue frames, the
-//     loading screen, the About box);
+//     loading screen, the About box; ../findings/REN2RES.md);
 //   - the Renegades R in the command pane, from renegmbl.raw (in OPU\renegades, or beside the module), in place of
 //     the colony emblem;
 //   - the difficulty the loader picked (RENEGADES_DIFFICULTY), which op2launcher's start can't pass;
-//   - the random seed the loader chose (RENEGADES_SEED), in place of the clock's.
+//   - the random seed the loader chose (RENEGADES_SEED), in place of the clock's;
+//   - the player's name from the loader's Preferences in the game's player record, which op2launcher's start leaves
+//     empty, and the "Renegades v<release>" message at a mission's start (the missions' scripts carry no version);
+//   - saved games as SGAMEn.REN, Renegades' own slots, as the original mod made them, with a Renegades save tag so
+//     that only a Renegades game loads them.
 // Nothing on disk is changed, and it only acts when the Renegades loader started the game (environment variable
 // RENEGADES_LAUNCH=1, inherited by the game). Any other game is stock; so is the next one after a crash.
 //
@@ -24,6 +28,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -57,6 +62,33 @@ static bool g_difficultyPatched = false;
 static const uintptr_t kStartSeed = 0x48765B;
 static const unsigned char kStartSeedStock[12] = { 0xC1, 0xE0, 0x10, 0x8B, 0x8C, 0x24, 0x32, 0x01, 0x00, 0x00, 0x33, 0xC8 };
 static bool g_seedPatched = false;
+// It leaves GameStartInfo's player names empty (it zeroes the struct at [esp+80h] and only copies the script name),
+// so the player record has no name. It then starts the game with `call TethysGame::StartGame` (0x487758, a __thiscall
+// on 0x56EA98 taking the GameStartInfo); that call is pointed at StartGameWithName, which fills player 0's name
+// (GameStartInfo +0x60, 13 bytes) as OP2TestHarness fills "Harness", and the game copies it into the record.
+static const uintptr_t kStartGameCall = 0x487758;
+static const uintptr_t kStartGame = 0x4893B0;
+static const size_t kGsiPlayerName = 0x60;
+static const size_t kNameSize = 13;
+// The saved games' extension, as Renegades' original op2mod.dll made it (findings/decompile/renshell.md): the save
+// dialog names each slot from "SGAME%d.OP2" (0x4E0614, 13 places in 0x417100-0x418F5F) and its index "SGAME10.OP2"
+// (0x4E0628, at 0x416F9D), so their "OP2" becomes "REN" and a Renegades game keeps its own ten slots. OPU 1.4.1 only
+// supplies the folder (OPUPatch hooks 0x416F78 for OPU\saves\), so the saves are OPU\saves\SGAMEn.REN. The two
+// "op2" in the file filter text "... (*.op2)" / "*.op2" (0x4E5AB7, 0x4E5ABE) follow, as in the original.
+static const uintptr_t kSaveExts[] = { 0x4E061C, 0x4E0630, 0x4E5AB7, 0x4E5ABE };
+static const char* const kSaveExtStock[] = { "OP2", "OP2", "op2", "op2" };
+static bool g_saveExtPatched[4] = {};
+// Every save starts with a tag the game checks on load as a string (TethysGame::VerifySavedGameFileTag, 0x48A190).
+// OPU 1.4.1 points the game's save and load code at its own "OUTPOST2 1.4.0-OPU SAVE" in OPUPatch.dll (in place of
+// the stock tag at 0x4D6380); a Renegades game makes that string "OUTPOST2 1.4.0-REN SAVE" (same length), so its saves
+// carry the Renegades tag, it loads only those, and OPU 1.4.1 without this module refuses them, whatever the file is
+// called: a Renegades save needs the Renegades game around it.
+static const char kOpuSaveTag[] = "OUTPOST2 1.4.0-OPU SAVE";
+static const char kRenSaveTag[] = "OUTPOST2 1.4.0-REN SAVE";
+static char* g_saveTag = nullptr;
+static unsigned char g_startGameCallStock[5] = {};
+static bool g_startGamePatched = false;
+static char g_playerName[kNameSize] = "";
 
 static bool g_namePatched = false;
 static HMODULE g_ren2res = nullptr;
@@ -164,7 +196,7 @@ static void UseRenegadesTexts() {
     Log("texts: \"Outpost 2\" -> \"Renegades\" in %d of %d of the game's texts", done, n);
 }
 
-// The menu shell: Renegades' renshell.dll (the stock OP2Shell.dll with 27 edits)
+// The menu shell: Renegades' renshell.dll (the stock OP2Shell.dll with 27 edits, ../findings/decompile/renshell.md)
 // in place of OP2Shell.dll, by name, as op2mod.dll did: the game looks the name up at 0x4E96A0 (through the pointer
 // at 0x4E96B0) when it opens its menus. renshell loads renshres.dll (its dialogs and art) by name, found in the OPU
 // folder, and reads its texts from ren.vol, added to the game's archives here with op2ext's AddVolToList.
@@ -248,6 +280,119 @@ static void UseSeed() {
     Log("seed: %lu (%s)", static_cast<unsigned long>(s), g_seedPatched ? "patched" : "NOT patched");
 }
 
+// "Renegades v1.2.14" in the message log at a mission's start: the release, from this module's own version resource
+// (Renegades.rc), so the missions' scripts don't carry it. A saved game keeps a mission's script only with the same
+// .lua (OP2Lua 0.8.8 checks the whole file), so a version inside the scripts would stop every save at each release.
+static char g_startMessage[64] = "";
+
+// The module's file version as "1.2.14", from its VS_FIXEDFILEINFO (major.minor.build; the fourth number is 0).
+static bool ModuleVersion(char* out, size_t size) {
+    HRSRC r = FindResourceA(g_hInst, MAKEINTRESOURCEA(1), MAKEINTRESOURCEA(16));   // RT_VERSION
+    HGLOBAL g = r ? LoadResource(g_hInst, r) : nullptr;
+    const auto* p = g ? static_cast<const unsigned char*>(LockResource(g)) : nullptr;
+    const DWORD n = r ? SizeofResource(g_hInst, r) : 0;
+    for (DWORD i = 0; p && i + sizeof(VS_FIXEDFILEINFO) <= n; i += 4) {
+        const auto* f = reinterpret_cast<const VS_FIXEDFILEINFO*>(p + i);
+        if (f->dwSignature == 0xFEEF04BD) {
+            sprintf_s(out, size, "%u.%u.%u", HIWORD(f->dwFileVersionMS), LOWORD(f->dwFileVersionMS), HIWORD(f->dwFileVersionLS));
+            return true;
+        }
+    }
+    return false;
+}
+
+// Posts the start message silently, as the scripts' game.message(text, false) did: the game's TethysGame::AddMessage
+// export (static __fastcall: pixel x, pixel y, text, player -1 for all, sound) always plays a sound, so the sound
+// manager's on flag (0x56D250 + 0x920) is off for the call, as OP2Lua does it.
+static void PostStartMessage() {
+    using AddMessage = void(__fastcall*)(int, int, const char*, int, int);
+    static const auto add = reinterpret_cast<AddMessage>(
+        GetProcAddress(GetModuleHandleA(nullptr), "?AddMessage@TethysGame@@SIXHHPADHH@Z"));
+    if (!add || !g_startMessage[0]) return;
+    int* soundOn = reinterpret_cast<int*>(0x56D250 + 0x920);
+    const int was = *soundOn;
+    *soundOn = 0;
+    add(0, 0, g_startMessage, -1, 0);
+    *soundOn = was;
+}
+
+// The game's TethysGame::StartGame, called on with the player's name filled in, then the start message once the
+// mission has started. __fastcall with the unused EDX takes `this` in ECX and the GameStartInfo on the stack, popped
+// by the callee, as the __thiscall call site expects.
+static int __fastcall StartGameHook(void* game, void*, char* gsi) {
+    if (g_playerName[0]) memcpy(gsi + kGsiPlayerName, g_playerName, kNameSize);
+    using StartGame = int(__thiscall*)(void*, char*);
+    const int ok = reinterpret_cast<StartGame>(kStartGame)(game, gsi);
+    if (ok) PostStartMessage();
+    return ok;
+}
+
+// The mission's start (TApp::OnLoadScript's call of TethysGame::StartGame at 0x487758) goes through StartGameHook:
+// - the player's name from the loader's Preferences (`[Game] Name` in OPU\outpost2.ini, at most 12 characters), so the
+//   game's player record has it as in a multiplayer game (tools that read the record, saved games); without one, the
+//   game's own empty name;
+// - the "Renegades v<release>" start message.
+static void UseStartHook() {
+    char name[64] = "";
+    GetPrivateProfileStringA("Game", "Name", "", name, sizeof(name), (g_dir + "outpost2.ini").c_str());
+    strncpy_s(g_playerName, name, _TRUNCATE);
+    char version[32] = "";
+    if (ModuleVersion(version, sizeof(version))) sprintf_s(g_startMessage, "Renegades v%s", version);
+    const unsigned char* at = reinterpret_cast<const unsigned char*>(kStartGameCall);
+    const uintptr_t target = kStartGameCall + 5 + *reinterpret_cast<const int32_t*>(at + 1);
+    if (at[0] != 0xE8 || target != kStartGame) {
+        Log("start: the code at 0x487758 isn't the expected call: another build of the game? Left alone.");
+        return;
+    }
+    memcpy(g_startGameCallStock, at, sizeof(g_startGameCallStock));
+    unsigned char ours[5] = { 0xE8 };
+    const int32_t rel = static_cast<int32_t>(reinterpret_cast<uintptr_t>(&StartGameHook) - (kStartGameCall + 5));
+    memcpy(ours + 1, &rel, 4);
+    g_startGamePatched = Poke(kStartGameCall, ours, sizeof(ours));
+    Log("start: name '%s' for player 0, message '%s' (%s)", g_playerName[0] ? g_playerName : "(the game's own)",
+        g_startMessage[0] ? g_startMessage : "(no version found)", g_startGamePatched ? "patched" : "NOT patched");
+}
+
+// Saved games as SGAMEn.REN and SGAME10.REN (see kSaveExts).
+static void UseRenSaves() {
+    int done = 0;
+    for (size_t i = 0; i < sizeof(kSaveExts) / sizeof(kSaveExts[0]); ++i) {
+        if (memcmp(reinterpret_cast<void*>(kSaveExts[i]), kSaveExtStock[i], 3) != 0) {
+            Log("saves: the text at 0x%08X isn't '%s': another build of the game? Left alone.",
+                static_cast<unsigned>(kSaveExts[i]), kSaveExtStock[i]);
+            continue;
+        }
+        g_saveExtPatched[i] = Poke(kSaveExts[i], "REN", 3);
+        done += g_saveExtPatched[i];
+    }
+    Log("saves: SGAMEn.REN and SGAME10.REN, the extension in %d of 4 places", done);
+}
+
+// OPU's save tag in OPUPatch.dll's image, or null when OPUPatch isn't loaded or holds no such string.
+static char* FindOpuSaveTag() {
+    HMODULE m = GetModuleHandleA("OPUPatch.dll");
+    if (!m) return nullptr;
+    auto* base = reinterpret_cast<unsigned char*>(m);
+    auto* dos = reinterpret_cast<IMAGE_DOS_HEADER*>(base);
+    auto* nt = reinterpret_cast<IMAGE_NT_HEADERS*>(base + dos->e_lfanew);
+    const size_t size = nt->OptionalHeader.SizeOfImage, len = sizeof(kOpuSaveTag);   // with the NUL
+    for (size_t i = 0; i + len <= size; ++i) {
+        if (base[i] == 'O' && memcmp(base + i, kOpuSaveTag, len) == 0) return reinterpret_cast<char*>(base + i);
+    }
+    return nullptr;
+}
+
+// The Renegades save tag (see kRenSaveTag). OPUPatch is loaded before this module (its op2ext entry comes first).
+static void UseRenSaveTag() {
+    char* tag = FindOpuSaveTag();
+    if (!tag) {
+        Log("save tag: OPU's \"%s\" not found in OPUPatch.dll: saves keep the game's tag", kOpuSaveTag);
+        return;
+    }
+    if (Poke(reinterpret_cast<uintptr_t>(tag), kRenSaveTag, sizeof(kRenSaveTag))) g_saveTag = tag;
+    Log("save tag: \"%s\" (%s): only a Renegades game loads its saves", kRenSaveTag, g_saveTag ? "patched" : "NOT patched");
+}
+
 static bool LoadEmblem() {
     // the loader's folder (OPU\renegades) first, then beside this module
     std::string path = g_dir + "renegades\\renegmbl.raw";
@@ -315,9 +460,10 @@ extern "C" __declspec(dllexport) void InitMod(const char* iniSectionName) {
     GetModuleFileNameA(g_hInst, path, MAX_PATH);
     g_dir = path;
     g_dir = g_dir.substr(0, g_dir.find_last_of("\\/") + 1);
-    // the log goes with the loader's files in OPU\renegades when that folder is there
-    DWORD a = GetFileAttributesA((g_dir + "renegades").c_str());
-    g_logPath = g_dir + ((a != INVALID_FILE_ATTRIBUTES && (a & FILE_ATTRIBUTE_DIRECTORY)) ? "renegades\\Renegades.log" : "Renegades.log");
+    // the log goes in OPU\logs, beside OP2Lua's and the loader's (made if the release's empty folder is gone)
+    CreateDirectoryA((g_dir + "logs").c_str(), nullptr);
+    DWORD a = GetFileAttributesA((g_dir + "logs").c_str());
+    g_logPath = g_dir + ((a != INVALID_FILE_ATTRIBUTES && (a & FILE_ATTRIBUTE_DIRECTORY)) ? "logs\\Renegades-module.log" : "Renegades-module.log");
 
     char flag[8] = "";
     GetEnvironmentVariableA("RENEGADES_LAUNCH", flag, sizeof(flag));
@@ -330,6 +476,9 @@ extern "C" __declspec(dllexport) void InitMod(const char* iniSectionName) {
     UseRenegadesTexts();
     UseDifficulty();
     UseSeed();
+    UseStartHook();
+    UseRenSaves();
+    UseRenSaveTag();
     // The menu shell swap is opt-in (RENEGADES_SHELL=1): in OPU 1.4.1 the game hung going back to its menus with
     // RENShell.dll (2026-11-18), and the loader is the menu anyway.
     char shellFlag[8] = "";
@@ -355,6 +504,11 @@ extern "C" __declspec(dllexport) void DestroyMod() {
     if (g_shellPatched) Poke(kShellName, "OP2Shell.dll", 13);
     if (g_difficultyPatched) Poke(kStartDifficulty, kStartDifficultyStock, sizeof(kStartDifficultyStock));
     if (g_seedPatched) Poke(kStartSeed, kStartSeedStock, sizeof(kStartSeedStock));
+    if (g_startGamePatched) Poke(kStartGameCall, g_startGameCallStock, sizeof(g_startGameCallStock));
+    for (size_t i = 0; i < sizeof(kSaveExts) / sizeof(kSaveExts[0]); ++i) {
+        if (g_saveExtPatched[i]) Poke(kSaveExts[i], kSaveExtStock[i], 3);
+    }
+    if (g_saveTag) Poke(reinterpret_cast<uintptr_t>(g_saveTag), kOpuSaveTag, sizeof(kOpuSaveTag));
     for (size_t i = 0; i < sizeof(kTexts) / sizeof(kTexts[0]); ++i) {
         if (g_textPatched[i]) Poke(kTexts[i], g_textOriginal[i], 9);
     }

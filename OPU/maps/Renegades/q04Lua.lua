@@ -1,12 +1,31 @@
--- q04Lua.lua  -  Outpost : Renegades - Raid (Lua) v1.2.11
+-- q04Lua.lua  -  Outpost : Renegades - Raid (Lua)
 -- Converted from q04.dll. With q04Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, the computer players' AI and the mission's events (below the converted part) are written by hand.
 -- Games run: Easy 151, Normal 151, Hard 151.
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
 
--- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
-local VERSION = "1.2.11"
+-- The play log: each objective met and each failure condition that fires go in this mission's log
+-- (OPU\logs\OP2Lua-q0NLua.log) with the mark, for looking back over play tests. mission.failure takes a label here as
+-- its second argument (the game's takes only the trigger). The same in q01-q04.
+do
+  local function watch(kind, t, label)
+    if not (t and when) then return end
+    when(function() return t.valid and t:has_fired(players[1]) end,
+         function() print(("%s: %s (mark %d)"):format(kind, label or "?", game.tick() // 100)) end)
+  end
+  local victory, failure = mission.victory, mission.failure
+  mission.victory = function(t, text, ...)
+    local r = victory(t, text, ...)
+    watch("Objective met", r or t, text)
+    return r
+  end
+  mission.failure = function(t, label)
+    local r = failure(t)
+    watch("Failure", r or t, label)
+    return r
+  end
+end
 
 -- The win, for the Renegades loader: a game started by op2launcher never tells the script it ended, and Outpost 2
 -- sets its end reason only as it leaves the mission, which the loader can miss. So once every victory condition
@@ -615,7 +634,7 @@ end
 
 -- 0x11003477: the mission is lost 10 ticks later.
 local function lose()
-  mission.failure(trigger.time{ time = 10 })
+  mission.failure(trigger.time{ time = 10 }, "something the raid needed was lost")
 end
 
 local function all_data() return state.got.rpg and state.got.rare and state.got.panther and state.got.codes end
@@ -669,7 +688,8 @@ end
 -- The parts (0x11003E72) and the wrecked Panther (0x11003FB2), made once each when their building falls.
 local function parts_loaded()                                                   -- 0x11004027
   game.set_tile(keep.parts_at, keep.parts_tile)
-  mission.failure(trigger.count{ type = "CargoTruck", cargo = 9, compare = "==", count = 0, player = HUMAN })
+  mission.failure(trigger.count{ type = "CargoTruck", cargo = 9, compare = "==", count = 0, player = HUMAN },
+                  "no truck with the unit parts")
 end
 
 local function make_parts()
@@ -679,14 +699,15 @@ local function make_parts()
   game.set_cell_type(keep.parts_at, 4)
   mission.victory(entry_escape{ type = "CargoTruck", count = 1, cargo = 9, amount = 1 }, "Bring unit parts to entry point")
   count_event(HUMAN, "CargoTruck", "Wreckage", 1, 0, parts_loaded)
-  mission.failure(trigger.count{ type = "CargoTruck", compare = "==", count = 0, player = HUMAN })
+  mission.failure(trigger.count{ type = "CargoTruck", compare = "==", count = 0, player = HUMAN }, "no Cargo Truck")
   new_objective("New objective")
   state.parts_made = true
 end
 
 local function panther_taken()                                                  -- 0x11003D79
   mission.victory(entry_escape{ type = "Panther", count = 1 }, "Escort Panther to entry point")
-  mission.failure(trigger.count{ type = "Panther", cargo = "Microwave", compare = "==", count = 0, player = HUMAN })
+  mission.failure(trigger.count{ type = "Panther", cargo = "Microwave", compare = "==", count = 0, player = HUMAN },
+                  "the Panther lost")
   new_objective("New objective")
 end
 
@@ -1113,7 +1134,8 @@ local function objectives()
   holder_lab:set_kit("Lynx")                                                    -- the DLL's SetCargo(5, 0)
   mission.victory(t, "Capture Plymouth scientists")
   target(decoy_lab, "EvacuationTransport", gotNothing)
-  mission.failure(trigger.count{ type = "EvacuationTransport", compare = "==", count = 0, player = HUMAN })
+  mission.failure(trigger.count{ type = "EvacuationTransport", compare = "==", count = 0, player = HUMAN },
+                  "no Evacuation Transport")
   local rpg_lab, decoy = adv[2], adv[1]
   if keep.rpg == 1 then rpg_lab, decoy = adv[1], adv[2] end
   keep.rpg_lab = rpg_lab                                                        -- 0x1101701C
@@ -1150,7 +1172,7 @@ local function objectives()
   count_event(HUMAN, "Scout", nil, 1, 3, function() if not all_data() then lose() end end)   -- 0x11003D6A
   mission.victory(trigger.count{ type = "Spider", compare = "==", count = 1, player = HUMAN },
                   "Spider prototype must survive")
-  mission.failure(trigger.count{ type = "Spider", compare = "==", count = 0, player = HUMAN })
+  mission.failure(trigger.count{ type = "Spider", compare = "==", count = 0, player = HUMAN }, "the Spider prototype lost")
   game.create_marker(P(ENTRY[1], ENTRY[2]), "Circle")
   keep.evac = make("EvacuationTransport", HUMAN, P(0x47, 0x7D), 6)              -- 0x11017014
   keep.evac:set_lights(true)
@@ -1272,8 +1294,13 @@ local function carried_lynx(c)
   return made
 end
 
+-- A saved game resumed with the script's state: OP2Lua (0.8.8) calls this on the first tick after the load. A save
+-- whose state couldn't be put back (another version of this script) doesn't get here; OP2Lua says so itself.
+function on_load_save()
+  game.message("GAME LOAD SUCCESSFUL", false)
+end
+
 function on_init()
-  game.message("Renegades v" .. VERSION, false)
   local difficulty = DIFFICULTIES[players[1].difficulty] and players[1].difficulty or "Normal"
   local d = DIFFICULTIES[difficulty]
   print("Difficulty: " .. difficulty)

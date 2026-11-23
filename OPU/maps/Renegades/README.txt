@@ -1,7 +1,7 @@
 OUTPOST 2: RENEGADES - mission files
 ====================================
 
-Eddy-B's Renegades campaign (2004-2006), remade as OP2Lua missions for OPU 1.4.1 with OP2Lua 0.8.3.
+Eddy-B's Renegades campaign (2004-2006), remade as OP2Lua missions for OPU 1.4.1 with OP2Lua 0.8.9.
 
   q01Lua ... q04Lua   Relocation, Onslaught, Consequences, Raid: each a .dll, its .lua script and .placement.lua
   Q01-Q04.MAP, .TEK   Renegades' own maps and tech trees

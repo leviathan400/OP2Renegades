@@ -1,5 +1,44 @@
 # Changelog
 
+## 1.2.15 (2026-11-23)
+
+Everything since 1.2.11: saved games. (1.2.12 to 1.2.14 went to testing only and were never published.)
+
+### Saved games
+
+- **A saved mission carries on where you saved it.** Its timers, events, objectives and the enemy's attacks pick up
+  where they were, and the message log says "GAME LOAD SUCCESSFUL". Before, a loaded Renegades mission had lost its
+  script and couldn't be finished.
+- **Load Game in the loader** (L on the main menu) lists your saves with each one's map, mission, when it was saved
+  and the game mark, and starts Outpost 2 straight into the one you pick. After a loaded game the loader goes back to
+  the campaign's mission menu, or to the main menu for a save of another mission.
+- **Renegades has its own save slots,** `OPU\saves\SGAME0.REN` to `SGAME9.REN`, as the original Renegades had, apart
+  from your other Outpost 2 saves. They load only in a game started from the Renegades loader: Outpost 2 on its own
+  refuses them, as it lacks Renegades' look and menus.
+- **Saves from 1.2.11 and earlier don't carry on:** they hold no mission script. Start the mission again.
+- From now on a release changes a mission's script only when the mission itself changes, so your saves keep working
+  across releases.
+
+### The loader
+
+- **Sound effects volume** in Preferences, with LESS and MORE as in the original.
+- **Wider Briefing, Objectives and story windows,** so more of the text shows at once.
+- The mission window's unit and structure counts say **"lost to enemies"**: they are Outpost 2's own counts, which
+  leave out what quakes, meteors and lava destroy.
+- **Only one loader at a time.** Starting it again brings the open one to the front.
+- Each mission's start and end are written to `OPU\logs\Renegades-loader.log`, and the missions log each objective
+  met and each failure, which helps with play-test reports.
+
+### The game
+
+- **Your name from Preferences** is your name in the game.
+- Each mission starts with "Renegades v1.2.15" in the message log.
+- **OP2Lua 0.8.9** (`OPU\OP2LuaCore.dll`; 1.2.11 had 0.8.7): saved games keep the missions' scripts.
+- **op2launcher 0.9.6** (`OPU\op2launcher.exe` and `Launcher.dll`): starts a saved game for the loader's Load Game.
+  Update both with the release.
+- `Renegades.dll` writes its log to `OPU\logs\Renegades-module.log`. An older `OPU\renegades\Renegades.log` is no
+  longer used and can be deleted.
+
 ## 1.2.11 (2026-11-22)
 
 Fixes from the first play tests.

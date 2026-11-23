@@ -12,8 +12,9 @@ listed change in the mission's script. Several are open questions for players: s
 - **Play each mission to a win**, carried on into the next: Relocation, Onslaught, Consequences and Raid. Reports,
   saved games and screenshots on the board help most. Every game starts from the same random start for now (seed 1),
   so a problem you report can be played again exactly; the first message-log line names the version you play.
-- **Saving and loading.** Check that a saved game of each mission loads and plays on, at different points of the
-  mission, and after quitting the game.
+- **Saving and loading.** Since 1.2.15 a saved mission carries on where it was. Check that a saved game of each
+  mission loads and plays on to its end, saved at different points of the mission, from the loader's Load Game and
+  from the game's own Load window.
 - **The loader's Preferences**, and the loader on a Windows set to another language.
 
 ## The missions
@@ -50,8 +51,6 @@ listed change in the mission's script. Several are open questions for players: s
 - **The icon.** A remake of the loader's icon, with the sizes Windows uses (16 to 256 pixels; the original is one
   32 x 32 image).
 - **The voice lines.** Remakes of the seven savant lines (`ren228.wav`-`ren234.wav`).
-- **Load Game in the loader**, perhaps with Renegades' own `.ren` saves as the original had, so they stay apart from
-  other games' saves.
 - **A random seed.** Once play testing is done, a random start per game as the original, still recorded so a game can
   be started again the same way.
 - **The statistics.** The loader's history records the structures lost as 0; it reads the game's statistics from the

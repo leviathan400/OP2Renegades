@@ -12,7 +12,13 @@ When the Renegades loader starts a game, the module:
   at the window's top left, the blue frames, the loading screen and the About box;
 - **puts the Renegades R in the command pane** in place of the colony emblem, from `OPU\renegades\renegmbl.raw`;
 - **says "Renegades" for "Outpost 2"** in 13 of the game's own texts: the window and taskbar title, the save
-  dialog's "Renegades Games (*.op2)", the quit prompt and a few messages;
+  dialog's "Renegades Games (*.REN)", the quit prompt and a few messages;
+- **gives Renegades its own saved games,** `OPU\saves\SGAME0.REN` to `SGAME9.REN`, as the original Renegades named
+  them, apart from other games' `.OP2` saves. They carry a Renegades save tag, so only a game the loader started
+  loads them: Outpost 2 on its own refuses one, even renamed;
+- **puts your name from the loader's Preferences** into the game, where the mission start leaves it empty;
+- **posts "Renegades v1.2.15"** in the message log at a mission's start, from its own version, so the missions'
+  scripts carry no version and a release leaves them, and your saved games, as they are;
 - **plays the difficulty you picked** in the loader. OPU's mission starter always starts Normal, so the loader
   passes the difficulty to the module (`RENEGADES_DIFFICULTY`: 0 Easy, 1 Normal, 2 Hard);
 - **starts from the random seed the loader chose** (`RENEGADES_SEED`) instead of one from the clock, so a play-test

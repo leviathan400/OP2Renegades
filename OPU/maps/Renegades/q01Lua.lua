@@ -1,12 +1,31 @@
--- q01Lua.lua  -  Outpost : Renegades - Relocation (Lua) v1.2.11
+-- q01Lua.lua  -  Outpost : Renegades - Relocation (Lua)
 -- Converted from q01.dll. With q01Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, Eden's AI and the mission's events (below the converted part) are written by hand.
 -- Games run: Easy 151, Normal 151, Hard 151.
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
 
--- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
-local VERSION = "1.2.11"
+-- The play log: each objective met and each failure condition that fires go in this mission's log
+-- (OPU\logs\OP2Lua-q0NLua.log) with the mark, for looking back over play tests. mission.failure takes a label here as
+-- its second argument (the game's takes only the trigger). The same in q01-q04.
+do
+  local function watch(kind, t, label)
+    if not (t and when) then return end
+    when(function() return t.valid and t:has_fired(players[1]) end,
+         function() print(("%s: %s (mark %d)"):format(kind, label or "?", game.tick() // 100)) end)
+  end
+  local victory, failure = mission.victory, mission.failure
+  mission.victory = function(t, text, ...)
+    local r = victory(t, text, ...)
+    watch("Objective met", r or t, text)
+    return r
+  end
+  mission.failure = function(t, label)
+    local r = failure(t)
+    watch("Failure", r or t, label)
+    return r
+  end
+end
 
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.
@@ -619,8 +638,13 @@ local function player_in(r)
   end
 end
 
+-- A saved game resumed with the script's state: OP2Lua (0.8.8) calls this on the first tick after the load. A save
+-- whose state couldn't be put back (another version of this script) doesn't get here; OP2Lua says so itself.
+function on_load_save()
+  game.message("GAME LOAD SUCCESSFUL", false)
+end
+
 function on_init()
-  game.message("Renegades v" .. VERSION, false)
   local difficulty = DIFFICULTIES[players[1].difficulty] and players[1].difficulty or "Normal"
   local d = DIFFICULTIES[difficulty]
   local goals = GOALS[difficulty]
@@ -648,8 +672,10 @@ function on_init()
   mission.victory(trigger.kit{type = "StructureFactory", count = 1, player = HUMAN}, "Have a Structure Factory kit in storage")
   mission.victory(trigger.kit{type = "CommandCenter", count = 1, player = HUMAN}, "Have a Command Center kit in storage")
   mission.victory(trigger.kit{type = "Tokamak", count = 1, player = HUMAN}, "Have a Tokamak kit in storage")
-  mission.failure(trigger.resource{resource = "Colonists", compare = "<", amount = goals.fail_colonists, player = HUMAN})
-  mission.failure(trigger.resource{resource = "Scientists", compare = "<", amount = goals.fail_scientists, player = HUMAN})
+  mission.failure(trigger.resource{resource = "Colonists", compare = "<", amount = goals.fail_colonists, player = HUMAN},
+                  "fewer than " .. goals.fail_colonists .. " colonists")
+  mission.failure(trigger.resource{resource = "Scientists", compare = "<", amount = goals.fail_scientists, player = HUMAN},
+                  "fewer than " .. goals.fail_scientists .. " scientists")
 
   -- Eden's timetable, in the order the DLL makes it (each draw from the game's random numbers in turn).
   once(goals.scouts[1], goals.scouts[2], send_scouts)
@@ -679,7 +705,8 @@ function on_init()
   -- Coming near Eden's base brings its forces out early.
   when(player_in(RECT(0x87, 1, 0x87 + 0x18, 1 + 0x20)), first_wave)
   when(player_in(RECT(0x8A, 1, 0x8A + 0x18, 1 + 0x0A)), second_wave)
-  mission.failure(trigger.operational{type = "CommandCenter", compare = "==", count = 0, player = HUMAN})
+  mission.failure(trigger.operational{type = "CommandCenter", compare = "==", count = 0, player = HUMAN},
+                  "no working Command Center")
 
   -- What follows from the mines on both sides. Eden's mine (P(0x91, 0x1D)) is made by the placement.
   when(function() return players[EDEN]:unit_count("CommonOreMine") == 0 end, build_base)

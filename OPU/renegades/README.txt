@@ -41,8 +41,9 @@ What goes where:
                               loader, copy lang.en.ini to lang.<code>.ini.
   OPU\Renegades.dll           the in-game look: the "OP: RENEGADES" title, the R in the command pane
   OPU\ren2res.dll             Renegades' in-game art, used by Renegades.dll
-  OPU\OP2LuaCore.dll          OP2Lua 0.8.7 (the missions need it; it replaces an older one)
-  OPU\op2launcher.exe, Launcher.dll   start a mission straight from the loader
+  OPU\OP2LuaCore.dll          OP2Lua 0.8.9 (the missions need it; it replaces an older one); saved games keep
+                              the missions' scripts
+  OPU\op2launcher.exe, Launcher.dll   0.9.6: start a mission, or a saved game, straight from the loader
   OPU\maps\Renegades\         the four missions, their maps and Renegades' voice lines
   OPU\logs\                   where OP2Lua writes the missions' logs
 

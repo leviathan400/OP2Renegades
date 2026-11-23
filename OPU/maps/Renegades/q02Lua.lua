@@ -1,12 +1,31 @@
--- q02Lua.lua  -  Outpost : Renegades - Onslaught (Lua) v1.2.11
+-- q02Lua.lua  -  Outpost : Renegades - Onslaught (Lua)
 -- Converted from q02.dll. With q02Lua.placement.lua (what every difficulty makes alike),
 -- this makes the colony's start: what changes with the difficulty, and the beacons the setup rolls.
 -- The objectives, the computer players' AI and the mission's events (below the converted part) are written by hand.
 -- Games run: Easy 151, Normal 151, Hard 151.
 -- Coordinates are the in-game status-bar ones (map file tile + 1); a kit's are relative to its start.
 
--- The release this mission belongs to (as in the header), posted in the message log at the start, without a sound.
-local VERSION = "1.2.11"
+-- The play log: each objective met and each failure condition that fires go in this mission's log
+-- (OPU\logs\OP2Lua-q0NLua.log) with the mark, for looking back over play tests. mission.failure takes a label here as
+-- its second argument (the game's takes only the trigger). The same in q01-q04.
+do
+  local function watch(kind, t, label)
+    if not (t and when) then return end
+    when(function() return t.valid and t:has_fired(players[1]) end,
+         function() print(("%s: %s (mark %d)"):format(kind, label or "?", game.tick() // 100)) end)
+  end
+  local victory, failure = mission.victory, mission.failure
+  mission.victory = function(t, text, ...)
+    local r = victory(t, text, ...)
+    watch("Objective met", r or t, text)
+    return r
+  end
+  mission.failure = function(t, label)
+    local r = failure(t)
+    watch("Failure", r or t, label)
+    return r
+  end
+end
 
 -- Beacons rolled each game, alike at every difficulty: `count` of the `spots` (no two alike) with the
 -- `kinds` by pick, anywhere in an `area` (x1, y1, x2, y2), or a tile's kind picked from `ways`.
@@ -1763,7 +1782,7 @@ function setup_mission(difficulty)
   mission.failure(trigger.set{
     trigger.count{ type = "CommandCenter", compare = "==", count = 0, player = HUMAN },
     trigger.count{ type = "ConVec", compare = "==", count = 0, player = HUMAN },
-  })
+  }, "no Command Center and no ConVec")
   setup_mines()
   local check = d == 2 and 4000 or 2500
   repeating(check, check, reinforcement_check)
@@ -1778,8 +1797,13 @@ end
 
 function on_tick() run_events() end
 
+-- A saved game resumed with the script's state: OP2Lua (0.8.8) calls this on the first tick after the load. A save
+-- whose state couldn't be put back (another version of this script) doesn't get here; OP2Lua says so itself.
+function on_load_save()
+  game.message("GAME LOAD SUCCESSFUL", false)
+end
+
 function on_init()
-  game.message("Renegades v" .. VERSION, false)
   local difficulty = DIFFICULTIES[players[1].difficulty] and players[1].difficulty or "Normal"
   local d = DIFFICULTIES[difficulty]
   print("Difficulty: " .. difficulty)
