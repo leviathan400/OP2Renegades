@@ -62,7 +62,7 @@ Dll=Renegades.dll
 
 ## Its log
 
-Each start adds to `OPU\renegades\Renegades.log`: whether it was a Renegades launch and what it changed. A normal
+Each start adds to `OPU\logs\Renegades-module.log`: whether it was a Renegades launch and what it changed. A normal
 start on Normal (times left out):
 
 ```
@@ -73,6 +73,9 @@ ren2res: the frame's bitmaps reloaded from ren2res.dll (title 179: loaded)
 texts: "Outpost 2" -> "Renegades" in 13 of 13 of the game's texts
 difficulty: Normal for the mission's player (patched)
 seed: 1 (patched)
+start: name 'Player' for player 0, message 'Renegades v1.2.15' (patched)
+saves: SGAMEn.REN and SGAME10.REN, the extension in 4 of 4 places
+save tag: "OUTPOST2 1.4.0-REN SAVE" (patched): only a Renegades game loads its saves
 shell: the stock menu shell (RENEGADES_SHELL=1 tries Renegades' renshell.dll)
 emblem: loaded ...\OPU\renegades\renegmbl.raw
 emblem: set (graphics 0x029E74C0, base 0x05C60436, entry was 0x0042E774)
