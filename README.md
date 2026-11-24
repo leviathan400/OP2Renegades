@@ -1,5 +1,7 @@
 # Outpost 2: Renegades
 
+![Renegades](https://renegades.outpostuniverse.org/img/logo.png)
+
 **Outpost 2: Renegades** is a four-mission Plymouth campaign for Outpost 2, made by Eddy-B and the Renegades team in
 2004-2006: *Relocation*, *Onslaught*, *Consequences* and *Raid*. Its source code was lost, and some of its missions
 crashed. This repository holds the campaign remade as [OP2Lua](https://github.com/leviathan400/OP2Lua) missions for
@@ -87,3 +89,6 @@ Questions, bug reports and play-test notes are welcome on the
 Renegades is a community effort. [TODO.md](TODO.md) lists what's planned and where help is welcome: play testing,
 the open questions about the missions, new art, translations and the loader. Say what you think, or what you'd like to
 take on, on the forum board.
+
+![Renegades](https://renegades.outpostuniverse.org/img/space.png)
+
