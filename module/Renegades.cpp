@@ -28,6 +28,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <cctype>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -316,11 +317,87 @@ static void PostStartMessage() {
     *soundOn = was;
 }
 
+// The Game Options pane's version line: gameOptionsView (0x566708) + 0x254, which its constructor (0x464FE0) fills
+// with "%s %s\n" and OPU 1.4.1 overwrites with "Version 1.4.1-OPU" (OPUPatch.dll copies 18 bytes there); the buffer
+// runs to the game-speed copy at +0x388 (307 characters). A Renegades game shows "<OPU's version> REN <release>" there
+// ("1.4.1 REN 1.2.18", 16 characters: as long as OPU's line, so it fits the pane).
+static const uintptr_t kVersionLine = 0x566708 + 0x254;
+static const size_t kVersionLineSize = 0x388 - 0x254;
+static char g_versionLine[64] = "";
+static char g_versionLineStock[64] = "";
+static bool g_versionLinePatched = false;
+
+// A file's version resource as "1.2.0.7", or "" when it has none.
+static std::string FileVersion(const char* path) {
+    DWORD ignored = 0;
+    const DWORD n = GetFileVersionInfoSizeA(path, &ignored);
+    std::vector<unsigned char> buf(n);
+    VS_FIXEDFILEINFO* f = nullptr;
+    UINT len = 0;
+    if (!n || !GetFileVersionInfoA(path, 0, n, buf.data()) ||
+        !VerQueryValueA(buf.data(), "\\", reinterpret_cast<void**>(&f), &len) || !f) {
+        return "";
+    }
+    char s[32];
+    sprintf_s(s, "%u.%u.%u.%u", HIWORD(f->dwFileVersionMS), LOWORD(f->dwFileVersionMS), HIWORD(f->dwFileVersionLS),
+              LOWORD(f->dwFileVersionLS));
+    return s;
+}
+
+// Puts the Renegades version line in, once the pane holds OPU's "Version ..." (again at each mission's start, in
+// case OPU writes its line after this module's InitMod). Anything else there is left alone.
+static void SetVersionLine() {
+    if (!g_versionLine[0]) return;
+    const char* now = reinterpret_cast<const char*>(kVersionLine);
+    if (strcmp(now, g_versionLine) == 0) return;
+    if (strncmp(now, "Version ", 8) != 0) return;
+    if (!g_versionLinePatched) strncpy_s(g_versionLineStock, now, _TRUNCATE);
+    g_versionLinePatched = Poke(kVersionLine, g_versionLine, strlen(g_versionLine) + 1) || g_versionLinePatched;
+}
+
+// OPU's version from its own line in OPUPatch.dll's image ("Version 1.4.1-OPU" gives "1.4.1"; OPUPatch.dll has no
+// version resource), or "" when OPUPatch isn't loaded or holds no such line.
+static std::string OpuVersion() {
+    HMODULE m = GetModuleHandleA("OPUPatch.dll");
+    if (!m) return "";
+    const auto* base = reinterpret_cast<const unsigned char*>(m);
+    const auto* nt = reinterpret_cast<const IMAGE_NT_HEADERS*>(base + reinterpret_cast<const IMAGE_DOS_HEADER*>(base)->e_lfanew);
+    const size_t size = nt->OptionalHeader.SizeOfImage;
+    for (size_t i = 0; i + 12 <= size; ++i) {
+        if (base[i] != 'V' || memcmp(base + i, "Version ", 8) != 0) continue;
+        size_t n = 0;
+        while (i + 8 + n < size && (isdigit(base[i + 8 + n]) || base[i + 8 + n] == '.')) ++n;
+        if (n && i + 8 + n + 4 <= size && memcmp(base + i + 8 + n, "-OPU", 4) == 0) {
+            return std::string(reinterpret_cast<const char*>(base + i + 8), n);
+        }
+    }
+    return "";
+}
+
+// The game's, OPU's and the release's versions in the log, and the pane's version line made from them: OPU's version
+// from OPUPatch.dll (OpuVersion), Outpost2.exe's from its version resource, the release from this module's.
+static void UseVersionLine() {
+    char exe[MAX_PATH] = "";
+    GetModuleFileNameA(nullptr, exe, MAX_PATH);
+    const std::string opu = OpuVersion();
+    char release[32] = "";
+    ModuleVersion(release, sizeof(release));
+    Log("versions: Outpost2.exe %s, OPU %s, Renegades %s; the pane's line is \"%.40s\"", FileVersion(exe).c_str(),
+        opu.empty() ? "? (OPUPatch.dll not loaded, or no \"Version ...-OPU\" in it)" : opu.c_str(), release[0] ? release : "?",
+        reinterpret_cast<const char*>(kVersionLine));
+    if (opu.empty() || !release[0]) return;
+    sprintf_s(g_versionLine, "%s REN %s", opu.c_str(), release);
+    SetVersionLine();
+    Log("version line: \"%s\" (%s)", g_versionLine,
+        g_versionLinePatched ? "patched" : "not yet: OPU's line isn't there; tried again at the mission's start");
+}
+
 // The game's TethysGame::StartGame, called on with the player's name filled in, then the start message once the
 // mission has started. __fastcall with the unused EDX takes `this` in ECX and the GameStartInfo on the stack, popped
 // by the callee, as the __thiscall call site expects.
 static int __fastcall StartGameHook(void* game, void*, char* gsi) {
     if (g_playerName[0]) memcpy(gsi + kGsiPlayerName, g_playerName, kNameSize);
+    SetVersionLine();
     using StartGame = int(__thiscall*)(void*, char*);
     const int ok = reinterpret_cast<StartGame>(kStartGame)(game, gsi);
     if (ok) PostStartMessage();
@@ -479,6 +556,7 @@ extern "C" __declspec(dllexport) void InitMod(const char* iniSectionName) {
     UseStartHook();
     UseRenSaves();
     UseRenSaveTag();
+    UseVersionLine();
     // The menu shell swap is opt-in (RENEGADES_SHELL=1): in OPU 1.4.1 the game hung going back to its menus with
     // RENShell.dll (2026-11-18), and the loader is the menu anyway.
     char shellFlag[8] = "";
@@ -509,6 +587,7 @@ extern "C" __declspec(dllexport) void DestroyMod() {
         if (g_saveExtPatched[i]) Poke(kSaveExts[i], kSaveExtStock[i], 3);
     }
     if (g_saveTag) Poke(reinterpret_cast<uintptr_t>(g_saveTag), kOpuSaveTag, sizeof(kOpuSaveTag));
+    if (g_versionLinePatched) Poke(kVersionLine, g_versionLineStock, strlen(g_versionLineStock) + 1);
     for (size_t i = 0; i < sizeof(kTexts) / sizeof(kTexts[0]); ++i) {
         if (g_textPatched[i]) Poke(kTexts[i], g_textOriginal[i], 9);
     }

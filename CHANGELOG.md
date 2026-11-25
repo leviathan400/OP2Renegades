@@ -1,5 +1,41 @@
 # Changelog
 
+## 1.2.19 (2026-11-25)
+
+Everything since 1.2.15: Consequences fixes, an end-of-mission screen, clearer saved-game messages. (1.2.16 to 1.2.18
+went to testing only and were never published here.)
+
+### Consequences (Mission 3)
+
+- **No more crash after destroying Eden's northern smelter.** Once it was gone, an Eden vehicle driving over its
+  tile could become the "smelter" of Eden's third mining group, and the game crashed as soon as a truck brought it
+  ore. The original Renegades has the same fault; the remake now sets that group up only with a real mine and smelter.
+- **More food at the start:** 3,800 on Easy, 2,500 on Normal and 2,000 on Hard (the original gives 2,100, 1,600 and
+  1,300), as the colony could starve before its first Agridome fed it.
+- **The defectors' messages point the right way.** Clicking "A group of colonists wants to defect." or "To transfer
+  colonists, put the evac next to a residence." in the message pane goes to the defectors' Evac, "Colonists
+  transferred safely." to the Residence, and each "New mission objective" to your first Standard Lab, as in the
+  original. Before, a click went to the map's top-left corner, Eden's base. (Bring the Evac next to one of your own
+  Residences.)
+
+### The loader
+
+- **An end-of-mission screen:** "Mission Accomplished!" or "Mission Failed", the final game mark, the units and
+  structures you built and lost to enemies, and what comes next ("On to Mission 4.", or the campaign won).
+- **A crash is reported.** If Outpost 2 crashes in a mission, the screen says "Outpost 2 crashed", with where, and the
+  log in `OPU\logs` that holds the details. If Outpost 2 is closed during a mission, it says so too.
+
+### The game
+
+- **OP2Lua 0.8.12** (`OPU\OP2LuaCore.dll`; 1.2.15 had 0.8.9):
+  - **A saved game that can't carry on says so clearly:** "GAME LOAD MISSION FAIL" and the reason, twice, the second
+    time with a sound. That happens when a mission's script has changed since the save, as Consequences' has in this
+    release.
+  - The objectives of such a game read "Objective unknown" instead of garbage or a crash.
+- **The Game Options pane shows the release:** "1.4.1 REN 1.2.19" in place of "Version 1.4.1-OPU".
+- **Saves from 1.2.15:** Relocation, Onslaught and Raid carry on. Consequences' load with its script stopped; start
+  that mission again.
+
 ## 1.2.15 (2026-11-23)
 
 Everything since 1.2.11: saved games. (1.2.12 to 1.2.14 went to testing only and were never published.)

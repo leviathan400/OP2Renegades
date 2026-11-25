@@ -42,7 +42,7 @@ local DIFFICULTIES = {
   Easy = {
     players = {
       [1] = {
-        workers = 40, scientists = 15, kids = 0, food = 2100, ore = 0,
+        workers = 40, scientists = 15, kids = 0, food = 3800, ore = 0,
         research = { 2106, 3607 },
         tech_level = 2,
         view = { 125, 125 },
@@ -87,7 +87,7 @@ local DIFFICULTIES = {
   Normal = {
     players = {
       [1] = {
-        workers = 35, scientists = 12, kids = 0, food = 1600, ore = 0,
+        workers = 35, scientists = 12, kids = 0, food = 2500, ore = 0,
         research = { 2106, 3607 },
         tech_level = 2,
         view = { 125, 125 },
@@ -124,7 +124,7 @@ local DIFFICULTIES = {
   Hard = {
     players = {
       [1] = {
-        workers = 30, scientists = 10, kids = 0, food = 1300, ore = 0,
+        workers = 30, scientists = 10, kids = 0, food = 2000, ore = 0,
         research = { 2106, 3607 },
         tech_level = 2,
         view = { 125, 125 },
@@ -604,21 +604,35 @@ local function P(x, y) return { x - 31, y + 1 } end
 local function RECT(x1, y1, x2, y2) return { math.max(x1 - 31, 1), y1 + 1, x2 - 31, y2 + 1 } end
 local function IX(unit) return unit.x + 31 end              -- a unit's tile as the DLL has it
 
+-- A message, pointing at `at` when it's given and standing, as the DLL's TethysGame::AddMessage(unit, ...) posts it to
+-- the human player (the DLL's player 0, Lua's 1): clicking it in the message pane goes to that unit. Without one, a
+-- plain message, which the pane takes to the map's top-left corner.
+local function say(text, sound, at)
+  if at and at.alive then
+    game.message_at(text, sound, 1, (at.x + 31) * 32 + 16, (at.y - 1) * 32 + 16)
+  else
+    game.message(text, sound)
+  end
+end
+
 -- Renegades' own voice lines: its extra.vol replaced the game's sounds 178-184 (savnt228-234). The remakes ship them as
 -- ren228.wav-ren234.wav beside the mission and play them with OP2Lua's game.play_wav (0.8.1), the message itself
--- silent; on an older core, the stock sound id plays, as before.
-local function voice(text, id)
+-- silent; on an older core, the stock sound id plays, as before. `at`: the unit the message points at (say).
+local function voice(text, id, at)
   if game.play_wav and id >= 178 and id <= 184 then
-    game.message(text, false)
+    say(text, false, at)
     game.play_wav("ren" .. (id + 50) .. ".wav")
   else
-    game.message(text, id)
+    say(text, id, at)
   end
 end
 local function IY(unit) return unit.y - 1 end
 local DIRS = { [0] = "East", "SouthEast", "South", "SouthWest", "West", "NorthWest", "North", "NorthEast" }
 
 local HUMAN, EDEN, PLY = 1, 2, 3                            -- the DLL's players 0, 1 and 2
+-- The human player's first Standard Lab, which the DLL's "New mission objective" messages point at (0x11001F99's
+-- PlayerBuildingEnum of player 0's Standard Labs), or nil without one.
+local function first_lab() return players[HUMAN]:buildings("StandardLab")[1] end
 
 local state = {
   d = 0,                       -- 0x1101C004: 0 Easy, 1 Normal, 2 Hard
@@ -1405,7 +1419,12 @@ local function mining_3()
   end
   local mine, smelter = on(0x65, 6), on(0x37, 0xA)
   if mine and smelter then
-    g.mining3:setup(mine, smelter, RECT(0x37, 8, 0x3B, 0xC))
+    -- The original takes whatever stands there. With a vehicle as the smelter (the smelter gone, an Eden Lynx on its
+    -- tile), the game's MiningGroup faults once a truck brings ore (FindAssociatedSmelter, 0x429F40, calls a structure
+    -- check on the vehicle). Set up only with a real mine and smelter; the rest goes on as the original's.
+    if mine.type == "CommonOreMine" and smelter.type == "CommonOreSmelter" then
+      g.mining3:setup(mine, smelter, RECT(0x37, 8, 0x3B, 0xC))
+    end
     g.mining3:set_targ_count("CargoTruck", nil, 4)
     g.factory:record_veh_reinforce_group(g.mining3, 1200)
     if g.mining3:unit_count() < 3 then move_units(g.truck_park, g.mining3) end
@@ -1707,7 +1726,7 @@ local function transfer()
   for _, v in ipairs(game.units_in_rect(RECT(x - 1, y - 1, x + 2, y + 2))) do
     if v.type == "Residence" and v.owner == 0 then
       if v.alive and not v.idled and evac.kit == "Panther" then                -- 0x110027B8
-        voice("Colonists transferred safely.", 0xB2)
+        voice("Colonists transferred safely.", 0xB2, v)                       -- at the Residence
         local p = players[HUMAN]
         p.scientists = p.scientists + 5
         p.workers = p.workers + 10
@@ -1733,7 +1752,7 @@ defection = function()
   end
   keep.evac:do_transfer(HUMAN)
   state.defected = true
-  game.message("A group of colonists wants to defect.", 0xA2)
+  say("A group of colonists wants to defect.", 0xA2, keep.evac)              -- at the Evac
   vc.target = trigger.special_target{ target = keep.evac, type = "Residence", one_shot = true, enabled = false }
   state.escorting = true
   vc.wait:destroy()
@@ -1741,8 +1760,8 @@ defection = function()
   vc.lost = trigger.time{ time = 10, enabled = false }
   vc.failure = mission.failure(vc.lost, "the defectors lost")
   mission.victory(vc.escorted, "Escort defectors to safety")
-  game.message("New mission objective: Escort defectors to safety", 0x7A)
-  game.message("To transfer colonists, put the evac next to a residence.", 0)
+  say("New mission objective: Escort defectors to safety", 0x7A, first_lab())
+  say("To transfer colonists, put the evac next to a residence.", 0, keep.evac)
   empty_area_event(true, HUMAN, RECT(0x20, 0x43, 0x3E, 0x5A), escort_start)
   cancel(ev.evac_gone)
   ev.evac_gone = nil
@@ -1920,7 +1939,7 @@ end
 local function added(trig, text, what)
   return function()
     mission.victory(trig(), text)
-    game.message("New mission objective" .. what, 0x7A)
+    say("New mission objective" .. what, 0x7A, first_lab())
   end
 end
 local function operational_trigger(type)
@@ -2175,7 +2194,8 @@ end
 -- - q03.carry is written when q03 is won; the DLL writes q03.mis only when it isn't, so q04 can't follow a win.
 -- - Needs OP2Lua 0.7.10 or later for unit:set_offensive (op2extra's SetOffensive), which holds the escorts' fire.
 -- - The scout patrol's ClearPatrolMode (after the third raid) is a DoGuardRect: OP2Lua has no ClearPatrolMode.
--- - Messages go to the message list; the DLL points some at a unit or the first Standard Lab.
+-- - Messages point where the DLL's do: the defection and the transfer hint at the Evac, "Colonists transferred safely."
+--   at the Residence, "New mission objective" at the first Standard Lab (game.message_at).
 -- - The volcano's music jump (0x11004590) is left out.
 -- - "Closest" (a repairer) is by straight-line tile distance; the game's ClosestEnumerator measures its own way.
 -- - The defectors' Evac carries a "Panther" as its cargo (map id 6, as the DLL's SetCargo(6)), the DLL's mark for
@@ -2186,4 +2206,11 @@ end
 -- - Kept as in the DLL: the repeating tile event on (0x65, 6) reruns Mining 3's setup every cycle once something
 --   stands there. Each run records Mining 3 with Eden's Factory again, and the duplicate records weight the Factory's
 --   choice of what to build, so running it once changes how Eden plays (measured 2026-11-19, ../../TODO.md).
+-- - Mining 3 is set up only when a Common Ore Mine stands on (0x65, 6) and a Common Ore Smelter on (0x37, 0xA); the
+--   DLL takes the first unit of any kind there. Once Eden's smelter is gone, an Eden vehicle on its tile became the
+--   group's smelter and the game crashed when a truck brought ore (findings/CRASH-LEADS.md 14). The records and the
+--   truck moves still run every time, as the DLL's.
+-- - The colony starts with more food: 3800, 2500 and 2000 (Easy, Normal, Hard) where the DLL gives 2100, 1600 and
+--   1300 (q03.md, "The difficulty"). With the DLL's amounts a player starved before the first Agridome could feed the
+--   colony (play test, 1.2.16).
 -- - Kept as in the DLL though probably a slip: Eden's waves add their one-shot events again on every wave.

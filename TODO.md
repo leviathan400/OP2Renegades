@@ -14,7 +14,8 @@ listed change in the mission's script. Several are open questions for players: s
   so a problem you report can be played again exactly; the first message-log line names the version you play.
 - **Saving and loading.** Since 1.2.15 a saved mission carries on where it was. Check that a saved game of each
   mission loads and plays on to its end, saved at different points of the mission, from the loader's Load Game and
-  from the game's own Load window.
+  from the game's own Load window. A save whose mission has changed since says "GAME LOAD MISSION FAIL" (1.2.19);
+  start that mission again.
 - **The loader's Preferences**, and the loader on a Windows set to another language.
 
 ## The missions

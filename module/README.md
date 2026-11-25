@@ -17,8 +17,10 @@ When the Renegades loader starts a game, the module:
   them, apart from other games' `.OP2` saves. They carry a Renegades save tag, so only a game the loader started
   loads them: Outpost 2 on its own refuses one, even renamed;
 - **puts your name from the loader's Preferences** into the game, where the mission start leaves it empty;
-- **posts "Renegades v1.2.15"** in the message log at a mission's start, from its own version, so the missions'
+- **posts "Renegades v1.2.19"** in the message log at a mission's start, from its own version, so the missions'
   scripts carry no version and a release leaves them, and your saved games, as they are;
+- **shows the release in the Game Options pane:** "1.4.1 REN 1.2.19" in place of OPU's "Version 1.4.1-OPU", with
+  OPU's version read from OPU itself (`OPUPatch.dll`) and the release from the module's own version;
 - **plays the difficulty you picked** in the loader. OPU's mission starter always starts Normal, so the loader
   passes the difficulty to the module (`RENEGADES_DIFFICULTY`: 0 Easy, 1 Normal, 2 Hard);
 - **starts from the random seed the loader chose** (`RENEGADES_SEED`) instead of one from the clock, so a play-test
@@ -73,9 +75,11 @@ ren2res: the frame's bitmaps reloaded from ren2res.dll (title 179: loaded)
 texts: "Outpost 2" -> "Renegades" in 13 of 13 of the game's texts
 difficulty: Normal for the mission's player (patched)
 seed: 1 (patched)
-start: name 'Player' for player 0, message 'Renegades v1.2.15' (patched)
+start: name 'Player' for player 0, message 'Renegades v1.2.19' (patched)
 saves: SGAMEn.REN and SGAME10.REN, the extension in 4 of 4 places
 save tag: "OUTPOST2 1.4.0-REN SAVE" (patched): only a Renegades game loads its saves
+versions: Outpost2.exe 1.2.0.7, OPU 1.4.1, Renegades 1.2.19; the pane's line is "Version 1.4.1-OPU"
+version line: "1.4.1 REN 1.2.19" (patched)
 shell: the stock menu shell (RENEGADES_SHELL=1 tries Renegades' renshell.dll)
 emblem: loaded ...\OPU\renegades\renegmbl.raw
 emblem: set (graphics 0x029E74C0, base 0x05C60436, entry was 0x0042E774)
