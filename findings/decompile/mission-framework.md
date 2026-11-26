@@ -25,8 +25,15 @@ The mission's own trigger system, kept entirely in the `.save` section, so it's 
 **The runner** (`0x11004900`, every game cycle from `AIProc`):
 1. Checks the save's timestamp (`0x110048C0`). The first time, a fresh game takes the DLL's own `TimeDateStamp`. A
    save whose stamp differs gets "WARNING !! Timestamp does not match DLL. This saved game might crash!" once.
-2. Walks the list from the end. Each event that is active and not marked "skip this pass" runs (its first virtual
-   method). Every event's "skip" mark is then cleared, so a new event runs from the next cycle.
+2. Walks the list from the end, from the count it read at the start (`0x1100492B`). Each event that is active and
+   not marked "new" (0x08) runs (its first virtual method); then that event's "new" mark is cleared (`0x11004960`),
+   whether it ran or not. An event marked for deletion is passed over and keeps its mark.
+   - **So a new event waits two passes.** An event made during a pass is added after the place the walk started, so
+     that pass doesn't visit it. The next pass visits it and only clears its mark, so it first runs on the pass
+     after that. An event made outside a pass (in `InitProc`) runs on the second pass.
+   - Until 2026-11-26 this said every mark was cleared after the walk, so a new event ran from the next cycle, and
+     the remakes worked that way. The one-pass shift moved a random draw by 4 ticks (q01 Easy's third
+     reinforcement came 192 ticks late); found with OP2TestHarness's draw log (`OP2H_RNG_LOG`) against the original.
 3. Each run is inside a C++ exception handler. An exception shows "Error executing event %02X ID=%02X
    CallBack=%08X" (EventError), and the runner goes on.
 4. A second pass removes the events marked for deletion and frees them (`0x110049E0`).
@@ -48,7 +55,7 @@ The flags:
 | 0x01 | active |
 | 0x02 | repeating |
 | 0x04 | one-shot |
-| 0x08 | new: skip the pass it was made in |
+| 0x08 | new: not run until a pass has visited it once (above) |
 | 0x20 | delete |
 
 Firing (`0x110047C0`) calls the callback; a one-shot event then marks itself for deletion.
