@@ -1,0 +1,409 @@
+address	string	referenced by
+11010574	runtime error 	
+11010588	TLOSS error\r\n	
+11010598	SING error\r\n	
+110105a8	DOMAIN error\r\n	
+110105b8	R6028\r\n- unable to initialize heap\r\n	
+110105e0	R6027\r\n- not enough space for lowio initialization\r\n	
+11010618	R6026\r\n- not enough space for stdio initialization\r\n	
+11010650	R6025\r\n- pure virtual function call\r\n	
+11010678	R6024\r\n- not enough space for _onexit/atexit table\r\n	
+110106b0	R6019\r\n- unable to open console device\r\n	
+110106dc	R6018\r\n- unexpected heap error\r\n	
+11010700	R6017\r\n- unexpected multithread lock error\r\n	
+11010730	R6016\r\n- not enough space for thread data\r\n	
+1101075c	\r\nabnormal program termination\r\n	
+11010780	R6009\r\n- not enough space for environment\r\n	11015974,FUN_1100ceab
+110107ac	R6008\r\n- not enough space for arguments\r\n	
+110107d8	R6002\r\n- floating point not loaded\r\n	
+11010800	Microsoft Visual C++ Runtime Library	FUN_1100ceab
+1101082c	Runtime Error!\n\nProgram: 	FUN_1100ceab
+1101084c	<program name unknown>	FUN_1100ceab
+11010894	GetLastActivePopup	FUN_1100e22e
+110108a8	GetActiveWindow	FUN_1100e22e
+110108b8	MessageBoxA	FUN_1100e22e
+110108c4	user32.dll	FUN_1100e22e
+110108d0	H:mm:ss	11015e70
+110108d8	dddd, MMMM dd, yyyy	11015e6c
+110108ec	M/d/yy	11015e68
+110108fc	December	11015e5c
+11010908	November	11015e58
+11010914	October	11015e54
+1101091c	September	11015e50
+11010928	August	11015e4c
+11010940	April	11015e3c
+11010948	March	11015e38
+11010950	February	11015e34
+1101095c	January	11015e30
+11010994	Saturday	11015dfc
+110109a0	Friday	11015df8
+110109a8	Thursday	11015df4
+110109b4	Wednesday	11015df0
+110109c0	Tuesday	11015dec
+110109c8	Monday	11015de8
+110109d0	Sunday	11015de4
+110109f4	SunMonTueWedThuFriSat	
+11010a0c	JanFebMarAprMayJunJulAugSepOctNovDec	
+110116ba	CloseHandle	
+110116c8	ReadFile	
+110116d4	GetFileSize	
+110116e2	CreateFileA	
+110116f0	DisableThreadLibraryCalls	
+1101170a	KERNEL32.dll	
+1101171a	?Id@ScStub@@QBEHXZ	
+11011730	??1ScGroup@@QAE@XZ	
+11011746	??1ScStub@@QAE@XZ	
+1101175a	?TotalUnitCount@ScGroup@@QAEHXZ	
+1101177c	?SetId@ScStub@@QAEXH@Z	
+11011796	??0ScGroup@@QAE@XZ	
+110117ac	??0MAP_RECT@@QAE@XZ	
+110117c2	??4MAP_RECT@@QAEAAU0@ABU0@@Z	
+110117e2	?OwnerID@Unit@@QBEHXZ	
+110117fa	?GetNext@InRectEnumerator@@QAEHAAVUnit@@@Z	
+11011828	??0InRectEnumerator@@QAE@ABUMAP_RECT@@@Z	
+11011854	?CreateWallOrTube@TethysGame@@SIHHHHW4map_id@@@Z	
+11011888	??1Trigger@@QAE@XZ	
+1101189e	?CreateFailureCondition@@YI?AVTrigger@@HHAAV1@PBD@Z	
+110118d4	??4Trigger@@QAEAAV0@ABV0@@Z	
+110118f2	?CreateOperationalTrigger@@YI?AVTrigger@@HHHW4map_id@@HW4compare_mode@@PBD@Z	
+11011942	??0Trigger@@QAE@XZ	
+11011958	?DoSetLights@Unit@@QAEXH@Z	
+11011976	?CreateUnit@TethysGame@@SIHAAVUnit@@W4map_id@@ULOCATION@@H1H@Z	
+110119b8	?CreateBeacon@TethysGame@@SIHW4map_id@@HHHHH@Z	
+110119ea	??1BuildingGroup@@QAE@XZ	
+11011a06	?RecordTube@BuildingGroup@@QAEXAAULOCATION@@@Z	
+11011a38	?RecordWall@BuildingGroup@@QAEXAAULOCATION@@W4map_id@@@Z	
+11011a74	?RecordBuilding@BuildingGroup@@QAEXAAULOCATION@@W4map_id@@1@Z	
+11011ab4	?GetCargo@Unit@@QBE?AW4map_id@@XZ	
+11011ad8	??4Unit@@QAEAAV0@ABV0@@Z	
+11011af4	?Player@@3PAV_Player@@A	
+11011b0e	??1FightGroup@@QAE@XZ	
+11011b26	??1MiningGroup@@QAE@XZ	
+11011b40	??0LOCATION@@QAE@XZ	
+11011b56	??0FightGroup@@QAE@XZ	
+11011b6e	??0BuildingGroup@@QAE@XZ	
+11011b8a	??0MiningGroup@@QAE@XZ	
+11011ba4	?Destroy@ScStub@@QAEXXZ	
+11011bbe	?Disable@ScStub@@QAEXXZ	
+11011bd8	?IsInitialized@ScStub@@QAEHXZ	
+11011bf8	?RemoveUnit@ScGroup@@QAEXVUnit@@@Z	
+11011c1e	?AddMessage@TethysGame@@SIXVUnit@@PADHH@Z	
+11011c4a	?GetNext@PlayerBuildingEnum@@QAEHAAVUnit@@@Z	
+11011c7a	??0PlayerBuildingEnum@@QAE@HW4map_id@@@Z	
+11011ca6	?scr_snprintf@@YAHPADIPBDZZ	
+11011cc4	?GetType@Unit@@QBE?AW4map_id@@XZ	
+11011ce8	?TakeUnit@ScGroup@@QAEXVUnit@@@Z	
+11011d0c	?GetNext@PlayerVehicleEnum@@QAEHAAVUnit@@@Z	
+11011d3a	?SetTargCount@ScGroup@@QAEXW4map_id@@0H@Z	
+11011d66	??0MAP_RECT@@QAE@HHHH@Z	
+11011d80	?Setup@MiningGroup@@QAEXVUnit@@0AAUMAP_RECT@@@Z	
+11011db2	?Location@Unit@@QBE?AULOCATION@@XZ	
+11011dd8	??0PlayerVehicleEnum@@QAE@H@Z	
+11011df8	?RecordBuilding@BuildingGroup@@QAEXAAULOCATION@@W4map_id@@1AAVScGroup@@@Z	
+11011e44	?ClearTargCount@ScGroup@@QAEXXZ	
+11011e66	?RecordVehReinforceGroup@BuildingGroup@@QAEXAAVScGroup@@H@Z	
+11011ea4	?SetCargo@Unit@@QAEXW4map_id@@0@Z	
+11011ec8	?GetFirstOfType@ScGroup@@QAEHAAVUnit@@W4UnitClassifactions@@@Z	
+11011f0a	?SetRect@FightGroup@@QAEXAAUMAP_RECT@@@Z	
+11011f36	?CreateVictoryCondition@@YI?AVTrigger@@HHAAV1@PBD@Z	
+11011f6c	?CreateTimeTrigger@@YI?AVTrigger@@HHHPBD@Z	
+11011f9a	?CreateSpecialTarget@@YI?AVTrigger@@HHAAVUnit@@W4map_id@@PBD@Z	
+11011fdc	?DoTransfer@Unit@@QAEXH@Z	
+11011ff8	?UnRecordVehGroup@BuildingGroup@@QAEXAAVScGroup@@@Z	
+1101202e	?Enable@Trigger@@QAEXXZ	
+11012048	?ClearSpecialTarget@Unit@@QAEXXZ	
+1101206c	?SetKids@_Player@@QAEXH@Z	
+11012088	?Kids@_Player@@QBEHXZ	
+110120a0	?SetWorkers@_Player@@QAEXH@Z	
+110120c0	?Workers@_Player@@QBEHXZ	
+110120dc	?SetScientists@_Player@@QAEXH@Z	
+110120fe	?Scientists@_Player@@QBEHXZ	
+1101211c	?IsLive@Unit@@QAEHXZ	
+11012134	?SetAttackType@FightGroup@@QAEXW4map_id@@@Z	
+11012162	?DoAttackEnemy@FightGroup@@QAEXXZ	
+11012186	?GetNext@GroupEnumerator@@QAEHAAVUnit@@@Z	
+110121b2	??0GroupEnumerator@@QAE@AAVScGroup@@@Z	
+110121dc	?Inflate@MAP_RECT@@QAEXHH@Z	
+110121fa	?DoPatrolOnly@FightGroup@@QAEXXZ	
+1101221e	?ClearGuarderdRects@FightGroup@@QAEXXZ	
+11012248	?GetWeapon@Unit@@QBE?AW4map_id@@XZ	
+1101226e	?UnitCount@ScGroup@@QAEHW4UnitClassifactions@@@Z	
+110122a2	?GetNext@LocationEnumerator@@QAEHAAVUnit@@@Z	
+110122d2	??0LocationEnumerator@@QAE@ABULOCATION@@@Z	
+11012300	?IsBuilding@Unit@@QBEHXZ	
+1101231c	??4BuildingGroup@@QAEAAV0@ABV0@@Z	
+11012340	?SetRect@BuildingGroup@@QAEXAAUMAP_RECT@@@Z	
+1101236e	?CreateBuildingGroup@@YI?AVBuildingGroup@@V_Player@@@Z	
+110123a8	?GetRand@TethysGame@@SIHH@Z	
+110123c6	?DoDeath@Unit@@QAEXXZ	
+110123de	?AddGuardedRect@FightGroup@@QAEXAAUMAP_RECT@@@Z	
+11012410	?DoGuardRect@FightGroup@@QAEXXZ	
+11012432	?Tick@TethysGame@@SIHXZ	
+1101244c	?MarkResearchComplete@_Player@@QAEXH@Z	
+11012476	?DoStop@Unit@@QAEXXZ	
+1101248e	?DoAttack@Unit@@QAEXV1@@Z	
+110124aa	?ClearPatrolMode@FightGroup@@QAEXXZ	
+110124d0	?HasTechnology@_Player@@QBEHH@Z	
+110124f2	?SetEarthquake@TethysGame@@SIXHHH@Z	
+11012518	?SetMeteor@TethysGame@@SIXHHH@Z	
+1101253a	?SetEruption@TethysGame@@SIXHHH@Z	
+1101255e	?SetTile@GameMap@@SIXULOCATION@@H@Z	
+11012584	??4LOCATION@@QAEAAU0@ABU0@@Z	
+110125a4	?SetLavaPossible@GameMap@@SIXULOCATION@@H@Z	
+110125d2	?GetTile@GameMap@@SIHULOCATION@@@Z	
+110125f8	?Difficulty@_Player@@QBEHXZ	
+11012616	?InitialSetTile@GameMap@@SIXULOCATION@@H@Z	
+11012644	?SetPatrolMode@FightGroup@@QAEXAAUPatrolRoute@@@Z	
+11012678	?SetCombineFire@FightGroup@@QAEXXZ	
+1101269e	??4FightGroup@@QAEAAV0@ABV0@@Z	
+110126c0	?CreateFightGroup@@YI?AVFightGroup@@V_Player@@@Z	
+110126f4	??4MiningGroup@@QAEAAV0@ABV0@@Z	
+11012716	?CreateMiningGroup@@YI?AVMiningGroup@@V_Player@@@Z	
+1101274c	?CreateCountTrigger@@YI?AVTrigger@@HHHW4map_id@@0HW4compare_mode@@PBD@Z	
+11012796	?CenterViewOn@_Player@@QAEXHH@Z	
+110127b8	?ForceMoraleGood@TethysGame@@SIXH@Z	
+110127de	?FreeMoraleLevel@TethysGame@@SIXH@Z	
+11012804	?SetFoodStored@_Player@@QAEXH@Z	
+11012826	?CreateEvacTrigger@@YI?AVTrigger@@HHHPBD@Z	
+11012854	?CreateResourceTrigger@@YI?AVTrigger@@HHW4trig_res@@HHW4compare_mode@@PBD@Z	
+110128a2	?CreateKitTrigger@@YI?AVTrigger@@HHHW4map_id@@HPBD@Z	
+110128da	?CreateSetTrigger@@YA?AVTrigger@@HHHHPBDZZ	
+11012908	?CreateResearchTrigger@@YI?AVTrigger@@HHHHPBD@Z	
+1101293a	?SetInitialLightLevel@GameMap@@SIXH@Z	
+11012962	?SetDaylightEverywhere@TethysGame@@SIXH@Z	
+1101298e	?SetDaylightMoves@TethysGame@@SIXH@Z	
+110129b6	?SetCheatProduceAll@TethysGame@@SIXH@Z	
+110129e0	?SetCheatUnlimitedResources@TethysGame@@SIXH@Z	
+11012a12	?SetCheatFastProduction@TethysGame@@SIXH@Z	
+11012a40	?SetCheatFastUnits@TethysGame@@SIXH@Z	
+11012a68	?SetOre@_Player@@QAEXH@Z	
+11012a84	?GoAI@_Player@@QAEXXZ	
+11012a9c	?GoEden@_Player@@QAEXXZ	
+11012ab6	?SetTechLevel@_Player@@QAEXH@Z	
+11012ad8	?SetColorNumber@_Player@@QAEXH@Z	
+11012afc	?GoHuman@_Player@@QAEXXZ	
+11012b18	?GoPlymouth@_Player@@QAEXXZ	
+11012b36	?SetMusicPlayList@TethysGame@@SIXHHPAW4SongIds@@@Z	
+11012b6c	??4PlayerVehicleEnum@@QAEAAV0@ABV0@@Z	
+11012b94	??4PlayerBuildingEnum@@QAEAAV0@ABV0@@Z	
+11012bbe	?NoPlayers@TethysGame@@SIHXZ	
+11012bde	?GetCellType@GameMap@@SIHULOCATION@@@Z	
+11012c08	?ClipToMap@MAP_RECT@@QAEXXZ	
+11012c26	?SetTruckCargo@Unit@@QAEXW4Truck_Cargo@@H@Z	
+11012c54	?SetCellType@GameMap@@SIXULOCATION@@H@Z	
+11012c7e	?RareOre@_Player@@QBEHXZ	
+11012c9a	?Ore@_Player@@QBEHXZ	
+11012cb2	?GetRLVCount@_Player@@QAEHXZ	
+11012cd2	?FoodStored@_Player@@QBEHXZ	
+11012cf0	?IsEden@_Player@@QAEHXZ	
+11012d0a	?IsBusy@Unit@@QBEHXZ	
+11012d22	?GetNext@ClosestEnumerator@@QAEHAAVUnit@@AAK@Z	
+11012d54	??0ClosestEnumerator@@QAE@ABULOCATION@@@Z	
+11012d80	?SetId@Unit@@QAEXH@Z	
+11012d98	?IsVehicle@Unit@@QBEHXZ	
+11012db2	?IsHuman@_Player@@QAEHXZ	
+11012dcc	outpost2.exe	
+11012ddc	??0IUnit@@QAE@XZ	
+11012df0	?IsIdled@IUnit@@QAE_NXZ	
+11012e0a	?SetOffensive@IUnit@@QAEX_N@Z	
+11012e2a	?Build@IUnit@@QAEXULOCATION@@@Z	
+11012e4c	?GetDamage@IUnit@@QAEHXZ	
+11012e68	?Dismantle@IUnit@@QAEXV1@@Z	
+11012e86	?Poof@IUnit@@QAEXXZ	
+11012e9c	?Salvage@IUnit@@QAEXUMAP_RECT@@V1@@Z	
+11012ec4	?GetTruckCargo@IUnit@@QAEHAAW4Truck_Cargo@@@Z	
+11012ef4	?GetCargo@IUnit@@QAEXAAW4map_id@@0@Z	
+11012f1c	?GetFactoryCargo@IUnit@@QAEXHAAW4map_id@@0@Z	
+11012f4c	?Repair@IUnit@@QAEXV1@@Z	
+11012f68	?GetBusy@IUnit@@QAE?AW4command_type@@XZ	
+11012f90	op2extra.dll	
+11012fa0	?Clip@LOCATION@@QAEXXZ	
+11012fba	??0Unit@@QAE@XZ	
+11012fcc	ImageUnload	
+11012fda	ImageLoad	
+11012fe4	IMAGEHLP.dll	
+11012ff4	BASS_ChannelGetPosition	
+1101300e	BASS_ChannelGetData	
+11013024	BASS_ChannelIsActive	
+1101303c	BASS_ChannelGetInfo	
+11013052	BASS_MusicLoad	
+11013064	BASS_StreamCreateFile	
+1101307c	BASS_Init	
+11013088	BASS_SetConfig	
+1101309a	BASS_GetVersion	
+110130aa	BASS.dll	
+110130b6	BASS_ErrorGetCode	
+110130ca	BASS_Free	
+110130d6	BASS_ChannelPlay	
+110130ea	BASS_MusicFree	
+110130fc	BASS_ChannelStop	
+11013110	BASS_ChannelSetPosition	
+1101312a	GetCurrentModDir	
+1101313e	GetGameDir	
+1101314a	op2ext.dll	
+11013158	GetModuleFileNameA	
+1101316e	LeaveCriticalSection	
+11013186	EnterCriticalSection	
+1101319e	VirtualProtect	
+110131b0	RtlUnwind	
+110131bc	HeapAlloc	
+110131c8	HeapFree	
+110131d4	HeapReAlloc	
+110131e2	GetCommandLineA	
+110131f4	GetVersion	
+11013202	ExitProcess	
+11013210	TerminateProcess	
+11013224	GetCurrentProcess	
+11013238	GetCurrentThreadId	
+1101324e	TlsSetValue	
+1101325c	TlsAlloc	
+11013268	TlsFree	
+11013272	SetLastError	
+11013282	TlsGetValue	
+11013290	GetLastError	
+110132a0	HeapDestroy	
+110132ae	HeapCreate	
+110132bc	VirtualFree	
+110132ca	InitializeCriticalSection	
+110132e6	DeleteCriticalSection	
+110132fe	VirtualAlloc	
+1101330e	IsBadWritePtr	
+1101331e	SetFilePointer	
+11013330	SetHandleCount	
+11013342	GetStdHandle	
+11013352	GetFileType	
+11013360	GetStartupInfoA	
+11013372	FlushFileBuffers	
+11013386	WriteFile	
+11013392	HeapSize	
+1101339e	GetCPInfo	
+110133aa	GetACP	
+110133b4	GetOEMCP	
+110133c0	FreeEnvironmentStringsA	
+110133da	FreeEnvironmentStringsW	
+110133f4	WideCharToMultiByte	
+1101340a	GetEnvironmentStrings	
+11013422	GetEnvironmentStringsW	
+1101343c	SetUnhandledExceptionFilter	
+1101345a	IsBadReadPtr	
+1101346a	IsBadCodePtr	
+1101347a	SetStdHandle	
+1101348a	MultiByteToWideChar	
+110134a0	LCMapStringA	
+110134b0	LCMapStringW	
+110134c0	GetStringTypeA	
+110134d2	GetStringTypeW	
+110134e4	GetProcAddress	
+110134f6	LoadLibraryA	
+11013506	SetEndOfFile	
+11013516	MessageBoxA	
+11013522	USER32.dll	
+110135da	Q03.dll	1101353c
+110135e2	??4IUnit@@QAEAAV0@ABV0@@Z	1101358c
+110135fc	?GetCargo@IUnit@@QAE?AW4map_id@@XZ	11013590
+1101361f	?UninstallMusicHook@@YAHXZ	11013594
+1101363a	AIProc	11013598
+11013641	DescBlock	1101359c
+1101364b	GetSaveRegions	110135a0
+1101365a	InitMap	110135a4
+11013662	InitProc	110135a8
+1101366b	LevelDesc	110135ac
+11013675	MapName	110135b0
+1101367d	NoResponseToTrigger	110135b4
+11013691	StatusProc	110135b8
+1101369c	TechtreeName	110135bc
+11014138	InvalidCommand	11014134
+11014148	MachineSettings	11014130
+11014178	MoDeath	1101411c
+11014180	ChatSFX	11014118
+11014188	ChatText	11014114
+11014194	GodWeapon	11014110
+110141a0	GameOpt	1101410c
+110141a8	MoPoof	11014108
+110141b0	MapChange	11014104
+110141bc	MoPatrol	11014100
+110141c8	MoCargoRoute	110140fc
+110141d8	MoStandGround	110140f8
+110141e8	MoGuard	110140f4
+110141f0	MoAttackObj	110140f0
+110141fc	MoLightToggle	110140ec
+1101420c	MoUnDevelop	110140e8
+11014218	MoDevelop	110140e4
+11014224	MoCreate	110140e0
+11014230	MoSalvage	110140dc
+1101423c	MoDismantle	110140d8
+11014248	MoReprogram	110140d4
+11014254	MoRepairObj	110140d0
+11014260	MoRepair	110140cc
+1101426c	MoFlyInSpace	110140c8
+1101427c	MoLaunch	110140c4
+11014288	MoTransfer	110140c0
+11014294	MoTrainScientists	110140bc
+110142a8	MoResearch	110140b8
+110142b4	MoScatter	110140b4
+110142c0	MoSelfDestruct	110140b0
+110142d0	MoUnidle	110140ac
+110142dc	MoIdle	110140a8
+110142e4	MoSurvey	110140a4
+110142f0	MoSpecialWait	110140a0
+11014300	MoScavenge	1101409c
+1101430c	MoDumpCargo	11014098
+11014318	MoRecycle	11014094
+11014324	MoUnloadCargo	11014090
+11014334	MoLoadCargo	1101408c
+11014340	MoTransferCargo	11014088
+11014350	MoProduce	11014084
+1101435c	MoRemoveWall	11014080
+1101436c	MoBuildWall	1101407c
+11014378	MoBuild	11014078
+11014380	MoStop	11014074
+11014388	MoDockEG	11014070
+11014394	MoDock	1101406c
+1101439c	MoMove	11014068
+110143a4	MoDoze	11014064
+1101440c	renegmbl.raw	FUN_11001172
+11014444	NoResponseToTrigger	FUN_110025b8,FUN_11005670,FUN_110056dc,FUN_11005748,FUN_110057b4,FUN_11005823,InitProc
+11014e00	Q03.map	1101357c,Entry Point
+11014e08	Outpost : Renegades - Consequences	11013578,Entry Point
+11014e2c	Q03.tek	11013588,Entry Point
+11014e48	New mission objective%s	FUN_11001f99
+11014e60	To transfer colonists, put the evac next to a residence.	FUN_110025b8
+11014e9c	: Escort defectors to safety	FUN_110025b8
+11014ebc	Escort defectors to safety	FUN_110025b8
+11014ed8	A group of colonists wants to defect.	FUN_110025b8
+11014f00	Colonists transferred safely.	FUN_110027b8
+11014f20	Renegades	InitMap,InitProc
+11014f64	medium	InitMap
+11014f74	Q02.mis	InitMap
+11014f7c	: Construct a Medical Center	FUN_11005670
+11014f9c	Have at least 1 Medical Center operational	FUN_11005670
+11014fc8	: Construct a DIRT	FUN_110056dc
+11014fdc	Have at least 1 DIRT operational	FUN_110056dc
+11015000	: Construct a Garage	FUN_11005748
+11015018	Have at least 1 Garage operational	FUN_11005748
+1101503c	: Build 2 Scouts	FUN_110057b4
+11015050	Have at least 2 Scouts	FUN_110057b4
+11015068	: Build 10 Lynx	FUN_11005823
+11015078	Have at least 10 Lynx	FUN_11005823
+11015090	Have enough evacuation transports for your population	InitProc
+110150c8	Wait for Plymouth defectors	InitProc
+110150e4	Rebuild lost databases	InitProc
+110150fc	Research Vulcanology	InitProc
+11015114	Completely research Mobile Weapons Platform	InitProc
+11015140	Completely research Emergency Response Systems	InitProc
+11015170	Completely research Health Maintenance	InitProc
+11015198	Reconstruct the spider database	InitProc
+110151b8	Please run Renegades missions from the Renegades game menu	InitProc
+110151f8	q03.mo3	FUN_11005f7f
+11015214	music2.wav	FUN_11006aa8
+11015228	Maximum number of events reached!	FUN_11006f80
+1101524c	ERROR	FUN_11006f80,FUN_11007200
+11015254	WARNING !!\r\nTimestamp does not match DLL\r\nThis saved game might crash!	FUN_11007030
+1101529c	WARNING	FUN_11007030
+110152a4	EventError	Catch@110070e1
+110152b0	Error executing event %02X\r\nID=%02X\r\nCallBack=%08X	Catch@110070e1
+110152e4	_new: Out of memory	FUN_11007220
+110152f8	_delete: Invalid pointer supplied	FUN_110072b0
+11015320	.save	GetSaveRegions
+ffdff1ac		
+ffdffc00		
